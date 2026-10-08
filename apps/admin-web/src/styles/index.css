@@ -1,0 +1,200 @@
+/* 全局样式：深色侧边栏 + 浅色内容区，简洁的医院信息化风格 */
+:root {
+  --er-sidebar-bg: #14263d;
+  --er-sidebar-sub-bg: #0f1d30;
+  --er-sidebar-text: #c2d3e6;
+  --er-sidebar-active: #1f6feb;
+  --er-content-bg: #f2f5f9;
+  --er-border: #e3e8ef;
+  --er-text-main: #1f2d3d;
+  --er-text-sub: #6b7c93;
+  --er-radius: 6px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  color: var(--er-text-main);
+  background: var(--er-content-bg);
+}
+
+a {
+  color: var(--er-sidebar-active);
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------ 页面骨架 */
+.page {
+  padding: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--er-text-main);
+}
+
+.page-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--er-text-sub);
+}
+
+.filter-bar {
+  margin-bottom: 12px;
+}
+
+.filter-bar .el-form-item {
+  margin-bottom: 10px;
+}
+
+.card-block {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--er-border);
+  border-radius: var(--er-radius);
+}
+
+.card-block + .card-block {
+  margin-top: 12px;
+}
+
+.block-title {
+  padding-left: 8px;
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+  border-left: 3px solid var(--er-sidebar-active);
+}
+
+.pager {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.chart-box {
+  width: 100%;
+  height: 320px;
+}
+
+.chart-box-sm {
+  width: 100%;
+  height: 240px;
+}
+
+/* -------------------------------------------------------- 统计卡片 */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-card {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--er-border);
+  border-left: 4px solid var(--er-sidebar-active);
+  border-radius: var(--er-radius);
+}
+
+.stat-card .stat-label {
+  font-size: 13px;
+  color: var(--er-text-sub);
+}
+
+.stat-card .stat-value {
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+.stat-card .stat-extra {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--er-text-sub);
+}
+
+.stat-card.is-green {
+  border-left-color: #22c58b;
+}
+
+.stat-card.is-orange {
+  border-left-color: #f5a623;
+}
+
+.stat-card.is-red {
+  border-left-color: #f56c6c;
+}
+
+.stat-card.is-blue {
+  border-left-color: #3f8bff;
+}
+
+/* ------------------------------------------------------------ 标签 */
+.color-tag {
+  display: inline-block;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 22px;
+  color: #fff;
+  border-radius: 3px;
+}
+
+.text-sub {
+  color: var(--er-text-sub);
+}
+
+.text-danger {
+  color: #f56c6c;
+}
+
+.text-strong {
+  font-weight: 600;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mt-12 {
+  margin-top: 12px;
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-8 {
+  display: flex;
+  gap: 8px;
+}

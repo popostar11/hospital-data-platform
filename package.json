@@ -1,0 +1,33 @@
+{
+  "name": "hospital-data-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "医院数据管理平台 —— 急救绿道大屏可视化 + 后台管理系统",
+  "scripts": {
+    "build:shared": "pnpm --filter @hospital/shared build",
+    "build:server": "pnpm --filter @hospital/server build",
+    "build:web": "pnpm --filter @hospital/admin-web build && pnpm --filter @hospital/screen-web build",
+    "build": "pnpm build:shared && pnpm build:server && pnpm build:web",
+    "dev": "pnpm build:shared && pnpm --parallel --filter @hospital/server --filter @hospital/admin-web --filter @hospital/screen-web dev",
+    "dev:server": "pnpm --filter @hospital/server dev",
+    "dev:admin": "pnpm --filter @hospital/admin-web dev",
+    "dev:screen": "pnpm --filter @hospital/screen-web dev",
+    "start": "pnpm --filter @hospital/server start",
+    "db:init": "pnpm --filter @hospital/server db:init",
+    "db:seed": "pnpm --filter @hospital/server db:seed",
+    "db:reset": "pnpm --filter @hospital/server db:reset",
+    "stop": "node tools/stop.mjs",
+    "autostart": "node tools/autostart.mjs",
+    "verify": "pnpm verify:bat && pnpm verify:api && pnpm verify:screen && pnpm verify:admin",
+    "verify:bat": "node tools/check-bats.mjs",
+    "verify:api": "node tools/verify-api.mjs",
+    "verify:screen": "node tools/verify-screen.mjs",
+    "verify:admin": "node tools/verify-admin.mjs",
+    "shot:screen": "node tools/screenshot.mjs \"http://127.0.0.1:3000/screen/?stream=0\" docs/refs/screen-shot.png 1920 1080",
+    "typecheck": "pnpm build:shared && pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.26.0"
+}

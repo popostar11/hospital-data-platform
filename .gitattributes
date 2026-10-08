@@ -1,0 +1,19 @@
+# 换行符策略：避免不同平台签出后产生无意义的整文件 diff
+* text=auto
+
+# Windows 批处理必须是 CRLF —— cmd.exe 解析 LF 结尾的 .bat 会出现诡异行为
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 其余脚本统一 LF
+*.sh  text eol=lf
+*.mjs text eol=lf
+*.ts  text eol=lf
+*.vue text eol=lf
+
+# 二进制资源不做换行转换
+*.png binary
+*.jpg binary
+*.mp4 binary
+*.xlsx binary
+*.db  binary

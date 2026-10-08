@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# pnpm v11：依赖的构建脚本默认全部禁止，必须显式放行
+# （旧字段 onlyBuiltDependencies 已在 v11 移除，改为 allowBuilds 映射）
+# esbuild：Vite 依赖，postinstall 需安装平台二进制
+# vue-demi：pinia 依赖，postinstall 依据 vue 版本切换入口
+allowBuilds:
+  esbuild: true
+  vue-demi: true
