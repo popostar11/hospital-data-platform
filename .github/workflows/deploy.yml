@@ -1,0 +1,85 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/worker/**'
+      - 'apps/admin-web/**'
+      - 'apps/screen-web/**'
+      - 'packages/shared/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: true
+
+jobs:
+  # ------------------------------------------------------------- 质量门禁
+  verify:
+    name: 类型检查与构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 类型检查
+        run: pnpm typecheck
+
+      - name: 批处理编码检查（cmd 编码坑的回归守卫）
+        run: pnpm verify:bat
+
+      - name: 构建前后端
+        run: pnpm build
+
+  # --------------------------------------------------------------- 部署
+  deploy:
+    name: 部署到 Cloudflare Workers
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建前端
+        run: pnpm build
+
+      - name: 汇总前端产物到 apps/worker/public
+        run: node apps/worker/scripts/build-assets.mjs
+
+      - name: 部署
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/worker
+          command: deploy
+
+      # 说明：D1 的建表与演示数据是**一次性**操作，刻意不放进 CI：
+      #   node tools/export-d1-seed.mjs
+      #   pnpm --filter @hospital/worker db:remote
+      # 原因：CI 里没有本地 data/hospital.db，且每次部署都灌库会覆盖线上改动。

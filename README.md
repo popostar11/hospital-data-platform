@@ -6,11 +6,51 @@
 |---|---|---|
 | 大屏可视化终端 | 只读、常驻横屏，对应参考大屏的界面 | `/screen/` |
 | 后台管理系统 | 病例管理、字典维护、统计报表、系统设置 | `/admin/` |
-| 后端接口 | NestJS + SQLite，统一前缀 | `/api/v1` |
+| 本地后端 | NestJS + node:sqlite，统一前缀 | `/api/v1` |
+| 公网后端（可选） | Cloudflare Workers + D1，同一套接口契约 | [`apps/worker/`](apps/worker/) |
 
 ![大屏效果](docs/refs/screen-shot.png)
 
 > 上图是 1920×1080 实机渲染截图，不是设计稿，画面内全部为合成演示数据。仓库只保留界面渲染截图（见 [`docs/refs/`](docs/refs/README.md)）；源素材因隐私原因不随仓库发布。
+
+---
+
+## 零、发布到公网（Cloudflare）与推送到 GitHub
+
+### 推送到 GitHub
+
+仓库已在本地初始化并完成首次提交，`node_modules` / `data` / `logs` / 现场素材均已排除。
+
+```bash
+# 方式一：已安装 gh CLI
+gh repo create hospital-data-platform --public --source=. --remote=origin --push
+
+# 方式二：先在 github.com 建好空仓库，再执行
+git remote add origin https://github.com/<你的用户名>/hospital-data-platform.git
+git branch -M main
+git push -u origin main
+```
+
+> 首次推送需要认证：HTTPS 方式请用 **Personal Access Token** 代替密码，或先执行 `gh auth login`。
+
+### 部署到 Cloudflare（免费额度足够）
+
+> Cloudflare Workers 跑不了 `node:sqlite` 与 NestJS，因此 `apps/worker/` 是针对 Workers **重写的后端壳**：
+> 路由、存储、口令校验换成 Workers 原语，但接口契约、SQL 与业务口径与本地版一一对应。
+> 差异（导出改 CSV、附件上传未启用、无 SSE、明文查看关闭）见部署文档。
+
+```bash
+pnpm --filter @hospital/worker exec wrangler login
+pnpm --filter @hospital/worker exec wrangler d1 create hospital_platform   # 把返回的 id 填进 wrangler.toml
+pnpm build
+node tools/export-d1-seed.mjs                  # 用现有种子逻辑生成 D1 导入 SQL
+pnpm --filter @hospital/worker db:remote       # 导入线上 D1（一次性）
+node apps/worker/scripts/build-assets.mjs      # 汇总两个前端产物
+pnpm --filter @hospital/worker deploy          # 部署并输出公网地址
+```
+
+推送 `main` 后 GitHub Actions 会自动重新部署（需配置 `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID` 两个 secret）。
+完整步骤、配额说明与故障排查见 **[docs/DEPLOY-CLOUDFLARE.md](docs/DEPLOY-CLOUDFLARE.md)**。
 
 ---
 
@@ -117,6 +157,9 @@ yiyuanshujuguanlixitong/
 | `pnpm verify:api` | 接口验收：36 项断言，把合成演示数据固化成测试 |
 | `pnpm verify:screen` | 大屏验收：渲染、脱敏、无缝滚动、截图（走 Chrome DevTools 协议） |
 | `pnpm verify:admin` | 后台验收：真实登录 + 10 个页面巡检 + 越权守卫 |
+| `pnpm verify:worker` | Cloudflare 版契约验收（33 项，需先启动 worker） |
+| `pnpm worker:dev` / `worker:deploy` | 本地启动 / 部署 Cloudflare Worker |
+| `pnpm worker:seed` / `worker:assets` | 生成 D1 导入 SQL / 汇总前端产物 |
 | `pnpm typecheck` | 全仓类型检查 |
 | `pnpm shot:screen` | 单独出一张 1920×1080 大屏截图到 `docs/refs/` |
 

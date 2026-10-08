@@ -1,0 +1,24 @@
+{
+  "name": "@hospital/worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Workers 版后端（Workers + D1），供公网演示部署",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "assets": "node scripts/build-assets.mjs",
+    "db:local": "wrangler d1 execute hospital_platform --local --file=./seed.sql",
+    "db:remote": "wrangler d1 execute hospital_platform --remote --file=./seed.sql",
+    "db:console": "wrangler d1 execute hospital_platform --local --command=\"select count(*) from green_channel_case\""
+  },
+  "dependencies": {
+    "@hospital/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "typescript": "^5.6.3",
+    "wrangler": "^4.148.0"
+  }
+}

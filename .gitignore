@@ -28,3 +28,16 @@ logs/
 tu/
 docs/refs/0*.jpg
 
+# Cloudflare Workers 相关产物与本地状态
+# 注意：下面几行不要写成「模式  # 注释」的形式 —— .gitignore 不支持行尾注释，
+# 整行都会被当成模式，导致文件被误加入版本库。
+#
+# public/    由 apps/worker/scripts/build-assets.mjs 汇总生成
+# seed.sql   由 tools/export-d1-seed.mjs 生成（约 5MB，含演示数据）
+# .dev.vars  本地开发用的密钥
+# .wrangler/ 本地 D1 数据与构建缓存
+apps/worker/public/
+apps/worker/seed.sql
+apps/worker/.dev.vars
+apps/worker/.wrangler/
+

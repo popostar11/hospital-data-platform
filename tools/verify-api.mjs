@@ -113,8 +113,10 @@ eq('底部总数 = 4', d.footer?.total, 4)
 
 const rawBoot = JSON.stringify(boot)
 check('响应体中不含明文姓名', !/陈志刚|李文博|王海涛|赵秀兰/.test(rawBoot))
-// 机构名称只允许是配置里的占位名称：仓库不含任何真实机构名，因此这里用「是否为占位名」来判定
-check('响应体中不出现占位名称以外的机构名', !/医院(?!$)/.test(rawBoot.replace(/示例市第二人民医院/g, '')))
+// 「医院」二字只允许出现在占位名称里 —— 这样既校验了机构名唯一，又不必把真实名称写进脚本
+const hospitalMentions = (rawBoot.match(/医院/g) ?? []).length
+const placeholderMentions = (rawBoot.match(new RegExp(EXPECT_HOSPITAL, 'g')) ?? []).length
+check('响应体中只出现占位机构名称', hospitalMentions === placeholderMentions, `医院×${hospitalMentions} / 占位名×${placeholderMentions}`)
 
 /* ---------------------------------------------------------------- 管理端 */
 console.log('\n· 管理端接口')
