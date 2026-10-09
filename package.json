@@ -22,6 +22,7 @@
     "worker:deploy": "pnpm --filter @hospital/worker deploy",
     "worker:assets": "node apps/worker/scripts/build-assets.mjs",
     "worker:seed": "node tools/export-d1-seed.mjs",
+    "worker:deploy:auto": "node tools/deploy-cloudflare.mjs",
     "verify": "pnpm verify:bat && pnpm verify:api && pnpm verify:screen && pnpm verify:admin",
     "verify:bat": "node tools/check-bats.mjs",
     "verify:api": "node tools/verify-api.mjs",
