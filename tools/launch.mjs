@@ -154,6 +154,21 @@ try {
     say('[4/5] 演示数据已就绪')
   }
 
+  /**
+   * 演示数据保鲜。
+   * 种子数据锚定「生成当天」：隔几天再启动，大屏「24 小时内」表格会是空的（实测过）。
+   * 这里启动时做一次检查，过期就按当前日期重新生成。
+   * 代价是会覆盖手动新增的演示数据，需要保留时在 .env 里设 DEMO_AUTO_REFRESH=false。
+   */
+  if (String(process.env.DEMO_AUTO_REFRESH ?? 'true') !== 'false') {
+    // 注意：process.execPath 通常是 "C:\Program Files\nodejs\node.exe"（含空格），
+    // 走 shell 拼命令时必须加引号，否则 cmd 会在空格处断开
+    const refresh = spawnSync(`"${process.execPath}" tools/refresh-demo.mjs`, { cwd: ROOT, shell: true, stdio: 'inherit' })
+    if (refresh.status !== 0) {
+      say('      ⚠ 演示数据保鲜检查未通过（不影响本次启动）')
+    }
+  }
+
   /* ------------------------------------------------------------- 启动 */
   // 端口被占用：服务大概率已在运行，不要再起一个（避免 EADDRINUSE 堆栈吓人）
   const busy = findListeners(PORT)

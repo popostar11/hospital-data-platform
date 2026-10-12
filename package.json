@@ -16,6 +16,7 @@
     "db:init": "pnpm --filter @hospital/server db:init",
     "db:seed": "pnpm --filter @hospital/server db:seed",
     "db:reset": "pnpm --filter @hospital/server db:reset",
+    "db:refresh-demo": "node tools/refresh-demo.mjs",
     "stop": "node tools/stop.mjs",
     "autostart": "node tools/autostart.mjs",
     "worker:dev": "pnpm --filter @hospital/worker dev",

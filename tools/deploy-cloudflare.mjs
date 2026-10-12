@@ -193,7 +193,7 @@ if (remoteCount !== null && Number(remoteCount) > 0) {
   say(`      远端已有 ${remoteCount} 条病例，跳过导入（避免覆盖线上数据）`)
 } else {
   say('      远端为空，正在生成并导入种子数据…')
-  const exp = spawnSync(`${process.execPath} tools/export-d1-seed.mjs`, { cwd: ROOT, shell: true, stdio: 'inherit' })
+  const exp = spawnSync(`"${process.execPath}" tools/export-d1-seed.mjs`, { cwd: ROOT, shell: true, stdio: 'inherit' })
   if (exp.status !== 0) {
     say('[错误] 种子导出失败（需先成功构建 apps/server）')
     process.exit(exp.status ?? 1)
@@ -209,7 +209,7 @@ if (remoteCount !== null && Number(remoteCount) > 0) {
 
 /* ------------------------------------------------------------ 部署 */
 say('[7/7] 汇总前端产物并部署')
-const assets = spawnSync(`${process.execPath} apps/worker/scripts/build-assets.mjs`, { cwd: ROOT, shell: true, stdio: 'inherit' })
+const assets = spawnSync(`"${process.execPath}" apps/worker/scripts/build-assets.mjs`, { cwd: ROOT, shell: true, stdio: 'inherit' })
 if (assets.status !== 0) {
   say('[错误] 前端产物汇总失败')
   process.exit(assets.status ?? 1)
@@ -236,7 +236,7 @@ if (url) {
   say()
   say('  正在对其运行云端验收…')
   say()
-  const verify = spawnSync(`${process.execPath} tools/verify-worker.mjs ${url}`, { cwd: ROOT, shell: true, stdio: 'inherit' })
+  const verify = spawnSync(`"${process.execPath}" tools/verify-worker.mjs ${url}`, { cwd: ROOT, shell: true, stdio: 'inherit' })
   if (verify.status !== 0) {
     say()
     say('  ⚠ 验收存在失败项，请查看上面的输出')
