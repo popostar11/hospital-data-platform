@@ -150,6 +150,7 @@ yiyuanshujuguanlixitong/
 | `pnpm db:init` | 只建表结构，不导数据 |
 | `pnpm db:seed` | 导入演示数据（保留已有结构，清空业务表后重建） |
 | `pnpm db:reset` | 删除数据库文件后重新导入（**注意：需先停掉服务**，SQLite 文件被占用时无法删除） |
+| `pnpm db:refresh-demo` | 演示数据保鲜：把未闭环的示例病例对齐到今天（**非破坏性**，保留你录入的数据）；加 `--reseed` 可恢复文档基线（会清空业务表） |
 | `pnpm stop` | 停止本地服务（等价于双击 `停止.bat`） |
 | `pnpm autostart install\|uninstall\|status` | 管理开机自启（等价于 `开机自启.bat` / `取消开机自启.bat`） |
 | `pnpm verify:bat` | 检查所有 `.bat` 是否为纯 ASCII（cmd 编码坑的回归守卫） |
