@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>医院数据管理平台 · 静态演示</title>
+<style>
+ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+   background:radial-gradient(1200px 600px at 50% 0%,#0b2a52,#041226 60%,#020a16);color:#dbeaff;
+   font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;padding:24px;text-align:center}
+ h1{font-size:24px;color:#7fd9ff;margin:0 0 6px;letter-spacing:2px}
+ .sub{color:#7f9dc4;font-size:13px;margin-bottom:28px}
+ a.card{display:block;width:320px;max-width:90vw;margin:0 auto;padding:22px;border-radius:14px;text-decoration:none;
+   color:#dbeaff;background:linear-gradient(160deg,rgba(20,64,116,.85),rgba(8,26,52,.9));
+   border:1px solid rgba(60,170,255,.35);transition:.2s}
+ a.card:hover{transform:translateY(-4px);border-color:rgba(24,224,255,.8)}
+ .card h2{margin:0 0 8px;font-size:17px;color:#9fe6ff}
+ .card p{margin:0;font-size:12px;line-height:1.7;color:#8fb0d6}
+ footer{margin-top:30px;font-size:12px;color:#5d7ba3;line-height:1.9;max-width:560px}
+ code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px}
+</style></head>
+<body>
+  <h1>医院数据管理平台</h1>
+  <div class="sub">示例市第二人民医院 · 急救绿道 · 静态演示</div>
+  <a class="card" href="./screen/">
+    <h2>大屏可视化终端</h2>
+    <p>1920×1080 横屏版面；本页使用导出的静态快照数据，无需后端</p>
+    <p style="margin-top:10px;color:#18e0ff">进入大屏 →</p>
+  </a>
+  <footer>
+    本站为 GitHub Pages 纯静态演示，只有大屏部分（数据为导出的快照）。<br/>
+    完整的后台管理系统（登录、病例增删改、报表导出）需要后端，请在本地运行：
+    <code>启动.bat</code>，然后访问 <code>http://127.0.0.1:3000/admin/</code><br/>
+    全部数据为合成的示例数据，不代表任何真实机构或真实统计结果。
+  </footer>
+</body></html>
