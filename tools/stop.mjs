@@ -1,10 +1,15 @@
 /**
  * 停止本地服务（由「停止.bat」调用，也可直接 `node tools/stop.mjs`）
  *
- * 做两件事：
- *   1. 结束监听服务端口的进程（含子进程）
- *   2. 兜底结束任何在跑本项目 dist/main.js 的 node 进程
+ * 顺序很重要：**必须先停守护进程，再停服务进程**。
+ * 否则守护进程会在 3 秒内把服务重新拉起来，「停止」看起来没生效。
+ *
+ * 做三件事：
+ *   1. 结束守护进程（tools/serve-daemon.mjs）
+ *   2. 结束监听服务端口的进程（含子进程）
+ *   3. 兜底结束任何在跑本项目 dist/main.js 的 node 进程
  */
+import { existsSync, readFileSync, rmSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -24,6 +29,20 @@ say()
 
 let stopped = 0
 
+/* ------------------------------------------------ 1. 先停守护进程 */
+const pidFile = join(ROOT, 'data', 'daemon.pid')
+if (existsSync(pidFile)) {
+  const daemonPid = Number(readFileSync(pidFile, 'utf8').trim())
+  if (Number.isFinite(daemonPid) && daemonPid > 0) {
+    if (killTree(daemonPid)) {
+      say(`  已停止守护进程（PID ${daemonPid}）`)
+      stopped++
+    }
+  }
+  rmSync(pidFile, { force: true })
+}
+
+/* ------------------------------------ 2. 再停占用端口的服务进程 */
 const listeners = findListeners(PORT)
 for (const pid of listeners) {
   if (killTree(pid)) {

@@ -1,0 +1,289 @@
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "header": {
+      "hospitalName": "示例市第二人民医院",
+      "systemName": "动态速览",
+      "serverTime": "2026-10-14 11:11:10",
+      "generatedAt": "2026-10-14 11:11:10",
+      "stale": false
+    },
+    "pie": {
+      "title": "急救绿道：累计患者饼图",
+      "centerLabel": "累计",
+      "total": 2381,
+      "items": [
+        {
+          "code": "TRAUMA",
+          "name": "创伤",
+          "value": 2381,
+          "color": "#3FA9FF"
+        }
+      ]
+    },
+    "bar": {
+      "title": "本院近12个月急救绿道患者量",
+      "unit": "人",
+      "yMax": 400,
+      "months": [
+        {
+          "label": "11",
+          "month": "2025-11",
+          "value": 188,
+          "color": "#F5C542",
+          "partial": false
+        },
+        {
+          "label": "12",
+          "month": "2025-12",
+          "value": 362,
+          "color": "#3E8BFF",
+          "partial": false
+        },
+        {
+          "label": "01",
+          "month": "2026-01",
+          "value": 219,
+          "color": "#35D0A5",
+          "partial": false
+        },
+        {
+          "label": "02",
+          "month": "2026-02",
+          "value": 254,
+          "color": "#FF7A8A",
+          "partial": false
+        },
+        {
+          "label": "03",
+          "month": "2026-03",
+          "value": 336,
+          "color": "#F5A623",
+          "partial": false
+        },
+        {
+          "label": "04",
+          "month": "2026-04",
+          "value": 328,
+          "color": "#3FD8D0",
+          "partial": false
+        },
+        {
+          "label": "05",
+          "month": "2026-05",
+          "value": 297,
+          "color": "#FF5FD2",
+          "partial": false
+        },
+        {
+          "label": "06",
+          "month": "2026-06",
+          "value": 281,
+          "color": "#4FA8FF",
+          "partial": false
+        },
+        {
+          "label": "07",
+          "month": "2026-07",
+          "value": 319,
+          "color": "#FFD84D",
+          "partial": false
+        },
+        {
+          "label": "08",
+          "month": "2026-08",
+          "value": 345,
+          "color": "#35C6E8",
+          "partial": false
+        },
+        {
+          "label": "09",
+          "month": "2026-09",
+          "value": 302,
+          "color": "#A96BFF",
+          "partial": false
+        },
+        {
+          "label": "10",
+          "month": "2026-10",
+          "value": 64,
+          "color": "#F5C542",
+          "partial": true
+        }
+      ]
+    },
+    "table": {
+      "title": "24小时内急救绿道患者",
+      "columns": [
+        {
+          "key": "name",
+          "label": "姓名",
+          "width": 12,
+          "align": "left"
+        },
+        {
+          "key": "gender",
+          "label": "性别",
+          "width": 8,
+          "align": "center"
+        },
+        {
+          "key": "age",
+          "label": "年龄",
+          "width": 8,
+          "align": "center"
+        },
+        {
+          "key": "disease",
+          "label": "疾病",
+          "width": 10,
+          "align": "center"
+        },
+        {
+          "key": "time",
+          "label": "时间",
+          "width": 16,
+          "align": "center"
+        },
+        {
+          "key": "sourceType",
+          "label": "推送方式",
+          "width": 12,
+          "align": "center"
+        },
+        {
+          "key": "distance",
+          "label": "距离",
+          "width": 12,
+          "align": "center"
+        },
+        {
+          "key": "status",
+          "label": "状态",
+          "width": 12,
+          "align": "center"
+        }
+      ],
+      "rows": [
+        {
+          "id": 3293,
+          "caseNo": "LD202610143293",
+          "name": "王*涛",
+          "gender": "男",
+          "age": 40,
+          "diseaseCode": "TRAUMA",
+          "diseaseName": "创伤",
+          "diseaseColor": "#3FA9FF",
+          "time": "10-14 17:29",
+          "createdAt": "2026-10-14 17:29:00",
+          "sourceType": "IN_HOSPITAL",
+          "sourceTypeName": "院内创建",
+          "distance": null,
+          "statusCode": "FINISHED",
+          "statusName": "完成急救",
+          "statusColor": "#3FE0B0"
+        },
+        {
+          "id": 3294,
+          "caseNo": "LD202610143294",
+          "name": "赵*兰",
+          "gender": "女",
+          "age": 88,
+          "diseaseCode": "TRAUMA",
+          "diseaseName": "创伤",
+          "diseaseColor": "#3FA9FF",
+          "time": "10-14 14:02",
+          "createdAt": "2026-10-14 14:02:00",
+          "sourceType": "PRE_HOSPITAL_120",
+          "sourceTypeName": "院前120",
+          "distance": null,
+          "statusCode": "FINISHED",
+          "statusName": "完成急救",
+          "statusColor": "#3FE0B0"
+        },
+        {
+          "id": 3291,
+          "caseNo": "LD202610143291",
+          "name": "陈*刚",
+          "gender": "男",
+          "age": 60,
+          "diseaseCode": "CHEST_PAIN",
+          "diseaseName": "胸痛",
+          "diseaseColor": "#7C6BFF",
+          "time": "10-14 10:55",
+          "createdAt": "2026-10-14 10:55:00",
+          "sourceType": "PRE_HOSPITAL_120",
+          "sourceTypeName": "院前120",
+          "distance": "2.12 km",
+          "statusCode": "FEEDBACK",
+          "statusName": "已反馈",
+          "statusColor": "#22D3A6"
+        },
+        {
+          "id": 5090,
+          "caseNo": "LD202610140005",
+          "name": "赵*鹏",
+          "gender": "男",
+          "age": 25,
+          "diseaseCode": "TRAUMA",
+          "diseaseName": "创伤",
+          "diseaseColor": "#3FA9FF",
+          "time": "10-14 09:55",
+          "createdAt": "2026-10-14 09:55:11",
+          "sourceType": "IN_HOSPITAL",
+          "sourceTypeName": "院内创建",
+          "distance": null,
+          "statusCode": "ARRIVED",
+          "statusName": "已到院",
+          "statusColor": "#4FA8FF"
+        },
+        {
+          "id": 3292,
+          "caseNo": "LD202610143292",
+          "name": "李*博",
+          "gender": "男",
+          "age": 13,
+          "diseaseCode": "TRAUMA",
+          "diseaseName": "创伤",
+          "diseaseColor": "#3FA9FF",
+          "time": "10-14 09:14",
+          "createdAt": "2026-10-14 09:14:00",
+          "sourceType": "IN_HOSPITAL",
+          "sourceTypeName": "院内创建",
+          "distance": null,
+          "statusCode": "FINISHED",
+          "statusName": "完成急救",
+          "statusColor": "#3FE0B0"
+        }
+      ],
+      "total": 5
+    },
+    "footer": {
+      "label": "目前急救绿道患者总数",
+      "total": 5,
+      "items": [
+        {
+          "code": "TRAUMA",
+          "name": "创伤",
+          "value": 4,
+          "color": "#3FA9FF"
+        },
+        {
+          "code": "CHEST_PAIN",
+          "name": "胸痛",
+          "value": 1,
+          "color": "#7C6BFF"
+        }
+      ]
+    },
+    "config": {
+      "refreshInterval": 30,
+      "scrollSpeed": 40,
+      "visibleRows": 4,
+      "maskEnabled": true,
+      "theme": "blue"
+    }
+  },
+  "traceId": "02f3da315f718abf"
+}

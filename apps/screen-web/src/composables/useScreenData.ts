@@ -1,6 +1,6 @@
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import type { ScreenBootstrap } from '@hospital/shared'
-import { fetchBootstrap, subscribeScreenStream } from '../api/screen'
+import { fetchBootstrap, isStaticMode, subscribeScreenStream } from '../api/screen'
 
 export type ScreenStatus = 'loading' | 'online' | 'reconnecting' | 'error'
 
@@ -55,12 +55,14 @@ export function useScreenData(screenCode: string) {
   }
 
   onMounted(() => {
-    void load()
-    // 支持 ?stream=0 关闭 SSE（截图/自动化测试时避免长连接阻塞页面加载完成）
-    const streamDisabled = new URLSearchParams(window.location.search).get('stream') === '0'
-    if (!streamDisabled) {
-      stopStream = subscribeScreenStream(screenCode, { onEvent: onStreamEvent })
-    }
+    void load().then(() => {
+      // 静态演示模式（GitHub Pages 等无后端场景）下不订阅 SSE，避免无意义的重连
+      // 也支持 ?stream=0 显式关闭（截图/自动化测试时避免长连接阻塞页面加载完成）
+      const streamDisabled = new URLSearchParams(window.location.search).get('stream') === '0'
+      if (!streamDisabled && !isStaticMode()) {
+        stopStream = subscribeScreenStream(screenCode, { onEvent: onStreamEvent })
+      }
+    })
   })
 
   onBeforeUnmount(() => {
