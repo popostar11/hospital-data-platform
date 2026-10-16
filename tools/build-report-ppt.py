@@ -227,6 +227,11 @@ def style_table(tbl, widths, header_sz=11, body_sz=11, row_h=0.8, header_h=0.42)
 
 
 def table(slide, x, y, w, rows, widths, row_h=0.8, header_h=0.42, body_sz=11):
+    """画表格并返回**表格底边所在的 y**（英寸）。
+
+    返回底边而不是表格对象：行高只是最小值，文字换行后实际更高，
+    调用方必须按真实底边放后续内容，否则下面的文字会压到表格上。
+    """
     n_rows, n_cols = len(rows), len(rows[0])
     gf = slide.shapes.add_table(n_rows, n_cols, Inches(x), Inches(y), Inches(w),
                                 Inches(header_h + row_h * (n_rows - 1)))
@@ -235,7 +240,7 @@ def table(slide, x, y, w, rows, widths, row_h=0.8, header_h=0.42, body_sz=11):
         for c, val in enumerate(row):
             tbl.cell(r, c).text = val
     style_table(tbl, widths, row_h=row_h, header_h=header_h, body_sz=body_sz)
-    return tbl
+    return y + sum(r.height for r in tbl.rows) / 914400
 
 
 def band(slide, y, h, text_runs):
@@ -495,15 +500,15 @@ table(s, M, 1.78, CW, [
 # =========================================================== 12 · 质量保证
 s = new("质量保证", "QUALITY", "怎么保证「改不坏」：71 项自动化验收",
         "这些检查会把大屏上的每个数字、每个页面的每个入口都核对一遍，改代码后跑一次即可。", 12)
-table(s, M, 1.78, CW, [
+tbl_bottom = table(s, M, 1.78, CW, [
     ["验收套件", "项数", "检查什么"],
     ["接口验收", "37 项", "把大屏上的每个数字钉死成断言：累计人数、12 个月序列、24 小时表格内容、筛选排序、权限拦截"],
     ["大屏验收", "7 项", "用真实浏览器打开：标题、8 列表头、姓名脱敏、无缝滚动，并输出 1920×1080 截图留档"],
     ["后台验收", "18 项", "真实登录后逐页巡检 13 个页面，并验证越权访问会被拦截"],
     ["公网版验收", "33 项", "除功能外，额外确认「响应里不出现真实机构名」与「不提供患者明文」"],
     ["批处理编码检查", "8 项", "防止中文写进 .bat 导致命令解析错乱——这是踩过的坑，固化成回归守卫"],
-], widths=[2.1, 1.1, 8.893], row_h=0.82, header_h=0.44)
-caption(s, 6.14,
+], widths=[2.1, 1.1, 8.893], row_h=0.74, header_h=0.44)
+caption(s, tbl_bottom + 0.16,
         "全部只依赖系统自带的 Node 与 Chrome，不需要安装任何测试框架，因此在任何一台电脑上都能跑起来。")
 
 # =========================================================== 13 · 安全合规

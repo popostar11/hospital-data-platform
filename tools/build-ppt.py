@@ -230,6 +230,11 @@ def style_table(tbl, widths, header_sz=11, body_sz=11, row_h=0.42):
 
 
 def put_table(slide, x, y, w, rows_data, widths, row_h=0.42):
+    """画表格并返回**表格底边所在的 y**（英寸）。
+
+    返回底边而不是表格对象：行高只是最小值，文字换行后实际更高，
+    调用方必须按真实底边放后续内容，否则下面的文字会压到表格上。
+    """
     n_rows, n_cols = len(rows_data), len(rows_data[0])
     gf = slide.shapes.add_table(n_rows, n_cols, Inches(x), Inches(y), Inches(w), Inches(row_h * n_rows))
     tbl = gf.table
@@ -237,7 +242,7 @@ def put_table(slide, x, y, w, rows_data, widths, row_h=0.42):
         for c, val in enumerate(row):
             tbl.cell(r, c).text = val
     style_table(tbl, widths, row_h=row_h)
-    return tbl
+    return y + sum(r.height for r in tbl.rows) / 914400
 
 
 # ============================================================== 1 · 封面
@@ -481,15 +486,15 @@ put_table(s, M, BODY_TOP + 0.35, CW, [
 
 # ============================================================== 12 · 验收
 s = new("03 · 怎么用", "改完代码，用 71 项检查确认没坏", 12)
-put_table(s, M, BODY_TOP + 0.35, CW, [
+tbl_bottom = put_table(s, M, BODY_TOP + 0.35, CW, [
     ["验收套件", "项数", "检查什么"],
     ["接口验收", "37 项", "把大屏上的每个数字都钉死成断言：累计人数、12 个月序列、24 小时表格内容、筛选排序、权限拦截"],
     ["大屏验收", "7 项", "真浏览器打开：标题、8 列表头、姓名脱敏、无缝滚动，并输出 1920×1080 截图"],
     ["后台验收", "18 项", "真实登录后逐页巡检 13 个页面，并验证越权会被拦"],
     ["公网版验收", "33 项", "额外确认「响应里不出现真实机构名」和「不提供患者明文」"],
     ["批处理编码检查", "1 项", "防止中文写进 .bat 导致命令解析错乱——这是踩过的坑，做成回归守卫"],
-], widths=[2.6, 1.2, 8.293], row_h=0.76)
-tb(s, M, BODY_TOP + 4.35, CW, 0.5,
+], widths=[2.6, 1.2, 8.293], row_h=0.70)
+tb(s, M, tbl_bottom + 0.16, CW, 0.5,
    [{"runs": [{"t": "全部只依赖系统自带的 Node 和 Chrome，", "sz": 13.5, "c": TEXT},
               {"t": "不需要装 Playwright 之类的测试框架", "sz": 13.5, "b": True, "c": BLUE_DEEP},
               {"t": "。", "sz": 13.5, "c": TEXT}]}])
