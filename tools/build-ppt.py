@@ -15,6 +15,8 @@
 """
 from pathlib import Path
 
+import sys
+
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
@@ -27,16 +29,53 @@ IMG = ROOT / "docs" / "ppt" / "images"
 OUT = ROOT / "docs" / "ppt" / "医院数据管理平台-项目介绍.pptx"
 
 # ----------------------------------------------------------------- 设计常量
+# 配色与大屏自身的样式令牌对齐（--c-bg / --c-cyan / --c-value 等），
+# 因此演示稿与产品是同一套视觉；--light 可切回浅色便于打印。
 FONT = "微软雅黑"
-BLUE_DEEP = RGBColor(0x0B, 0x3B, 0x72)   # 主标题
-BLUE = RGBColor(0x14, 0x6C, 0xC0)        # 强调
-ACCENT = RGBColor(0x1E, 0x88, 0xE5)      # 高亮/编号
-TEXT = RGBColor(0x1F, 0x2D, 0x3D)        # 正文
-MUTED = RGBColor(0x5A, 0x6B, 0x85)       # 次要文字
-LIGHT = RGBColor(0xF2, 0xF6, 0xFC)       # 卡片底
-LIGHT2 = RGBColor(0xE8, 0xF1, 0xFB)      # 次级底
-BORDER = RGBColor(0xD6, 0xE2, 0xF0)      # 描边
-WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+DARK = "--light" not in sys.argv
+
+if DARK:
+    PAGE_BG = RGBColor(0x04, 0x12, 0x2B)      # 大屏主背景
+    COVER_BG = RGBColor(0x02, 0x09, 0x1A)     # 大屏最深背景
+    BLUE_DEEP = RGBColor(0xEC, 0xF7, 0xFF)    # 主标题（深色下为近白）
+    BLUE = RGBColor(0x5C, 0xC8, 0xFF)         # 强调
+    ACCENT = RGBColor(0x7F, 0xE3, 0xFF)       # 高亮 / 编号
+    MINT = RGBColor(0x7F, 0xFF, 0xE0)         # 关键数值
+    GOOD = RGBColor(0x7F, 0xFF, 0xE0)
+    WARN = RGBColor(0xFF, 0xC2, 0x4D)
+    TEXT = RGBColor(0xBB, 0xD4, 0xEC)         # 正文
+    MUTED = RGBColor(0x7E, 0x9E, 0xC4)        # 次要文字
+    LIGHT = RGBColor(0x08, 0x22, 0x4A)        # 卡片底
+    LIGHT2 = RGBColor(0x06, 0x1A, 0x38)       # 次级底
+    BORDER = RGBColor(0x1A, 0x42, 0x72)       # 描边
+    CARD_FILL = RGBColor(0x06, 0x1A, 0x38)
+    TBL_HEAD = RGBColor(0x0C, 0x2C, 0x54)
+    TBL_HEAD_T = RGBColor(0x7F, 0xE3, 0xFF)
+    COVER_CARD = RGBColor(0x0A, 0x24, 0x48)
+    SOFT_ON_DARK = RGBColor(0xC7, 0xDC, 0xF2)
+    LABEL_ON_DARK = RGBColor(0x7F, 0x9D, 0xC4)
+    WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+else:
+    PAGE_BG = RGBColor(0xFF, 0xFF, 0xFF)
+    COVER_BG = RGBColor(0x0A, 0x2A, 0x52)
+    BLUE_DEEP = RGBColor(0x0B, 0x3B, 0x72)
+    BLUE = RGBColor(0x14, 0x6C, 0xC0)
+    ACCENT = RGBColor(0x1E, 0x88, 0xE5)
+    MINT = RGBColor(0x0E, 0x8F, 0x7A)
+    GOOD = RGBColor(0x2E, 0x9E, 0x5B)
+    WARN = RGBColor(0xD9, 0x8B, 0x2B)
+    TEXT = RGBColor(0x1F, 0x2D, 0x3D)
+    MUTED = RGBColor(0x5A, 0x6B, 0x85)
+    LIGHT = RGBColor(0xF2, 0xF6, 0xFC)
+    LIGHT2 = RGBColor(0xE8, 0xF1, 0xFB)
+    BORDER = RGBColor(0xD6, 0xE2, 0xF0)
+    CARD_FILL = RGBColor(0xFF, 0xFF, 0xFF)
+    TBL_HEAD = RGBColor(0x14, 0x6C, 0xC0)
+    TBL_HEAD_T = RGBColor(0xFF, 0xFF, 0xFF)
+    COVER_CARD = RGBColor(0x12, 0x3A, 0x69)
+    SOFT_ON_DARK = RGBColor(0xC8, 0xDC, 0xF2)
+    LABEL_ON_DARK = RGBColor(0x9F, 0xC2, 0xE6)
+    WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 
 SW, SH = 13.333, 7.5                      # 16:9
 M = 0.62                                  # 页边距
@@ -124,6 +163,12 @@ def footer(slide, n, total=13):
 
 def new(kicker, title, n, title_sz=27):
     s = prs.slides.add_slide(BLANK)
+    # 页面底色：深色主题必须显式铺一层，否则沿用模板白底
+    bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = PAGE_BG
+    bg.line.fill.background()
+    bg.shadow.inherit = False
     header(s, kicker, title, title_sz)
     footer(s, n)
     return s
@@ -178,10 +223,10 @@ def style_table(tbl, widths, header_sz=11, body_sz=11, row_h=0.42):
             cell.margin_top = cell.margin_bottom = Inches(0.045)
             cell.vertical_anchor = MSO_ANCHOR.MIDDLE
             cell.fill.solid()
-            cell.fill.fore_color.rgb = LIGHT2 if r == 0 else (WHITE if r % 2 else LIGHT)
+            cell.fill.fore_color.rgb = TBL_HEAD if r == 0 else (CARD_FILL if r % 2 else LIGHT)
             for p in cell.text_frame.paragraphs:
                 for run in p.runs:
-                    set_font(run, header_sz if r == 0 else body_sz, r == 0, BLUE_DEEP if r == 0 else TEXT)
+                    set_font(run, header_sz if r == 0 else body_sz, r == 0, TBL_HEAD_T if r == 0 else TEXT)
 
 
 def put_table(slide, x, y, w, rows_data, widths, row_h=0.42):
@@ -199,26 +244,26 @@ def put_table(slide, x, y, w, rows_data, widths, row_h=0.42):
 s = prs.slides.add_slide(BLANK)
 bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
 bg.fill.solid()
-bg.fill.fore_color.rgb = RGBColor(0x0A, 0x2A, 0x52)
+bg.fill.fore_color.rgb = COVER_BG
 bg.line.fill.background()
 bg.shadow.inherit = False
 
-tb(s, 1.0, 1.55, 11.3, 0.4, [{"runs": [{"t": "项目介绍 · 2026", "sz": 14, "b": True, "c": RGBColor(0x7F, 0xD9, 0xFF)}]}])
+tb(s, 1.0, 1.55, 11.3, 0.4, [{"runs": [{"t": "项目介绍 · 2026", "sz": 14, "b": True, "c": ACCENT}]}])
 tb(s, 1.0, 2.05, 11.3, 1.5,
    [{"runs": [{"t": "医院数据管理平台", "sz": 44, "b": True, "c": WHITE}], "space_after": 4},
-    {"runs": [{"t": "急救绿道", "sz": 44, "b": True, "c": RGBColor(0x7F, 0xD9, 0xFF)}]}])
+    {"runs": [{"t": "急救绿道", "sz": 44, "b": True, "c": ACCENT}]}])
 tb(s, 1.0, 3.85, 10.4, 0.8,
-   [{"runs": [{"t": "一块大屏看全局，一个后台管细节。", "sz": 17, "c": RGBColor(0xC8, 0xDC, 0xF2)}], "space_after": 4},
-    {"runs": [{"t": "这份 PPT 用大白话讲清楚：它是什么、怎么做的、怎么用。", "sz": 17, "c": RGBColor(0xC8, 0xDC, 0xF2)}]}])
+   [{"runs": [{"t": "一块大屏看全局，一个后台管细节。", "sz": 17, "c": SOFT_ON_DARK}], "space_after": 4},
+    {"runs": [{"t": "这份 PPT 用大白话讲清楚：它是什么、怎么做的、怎么用。", "sz": 17, "c": SOFT_ON_DARK}]}])
 for i, (head, desc) in enumerate([("全自动", "双击启动，之后开机即用、崩了自愈"),
                                   ("有验收", "71 项自动化检查，改坏了立刻知道"),
                                   ("已脱敏", "示例机构名与合成数据，可安全公开")]):
     x = 1.0 + i * 3.75
-    card(s, x, 5.0, 3.45, 0.92, RGBColor(0x12, 0x3A, 0x69), RGBColor(0x2A, 0x5A, 0x94))
+    card(s, x, 5.0, 3.45, 0.92, COVER_CARD, BORDER)
     num_dot(s, x + 0.42, 5.46, 0.34, str(i + 1), 11)
     tb(s, x + 0.72, 5.16, 2.6, 0.66,
        [{"runs": [{"t": head, "sz": 13, "b": True, "c": WHITE}], "space_after": 1},
-        {"runs": [{"t": desc, "sz": 9.5, "c": RGBColor(0x9F, 0xC2, 0xE6)}], "line": 1.15}])
+        {"runs": [{"t": desc, "sz": 9.5, "c": LABEL_ON_DARK}], "line": 1.15}])
 
 # ============================================================== 2 · 目录
 s = new("目录", "今天只讲三个问题", 2)
@@ -228,7 +273,7 @@ items = [("01 · 它是什么", "谁在用、解决什么问题、长什么样�
 for i, (head, desc, pages) in enumerate(items):
     x = M + i * (CW / 3 + 0.001)
     w = CW / 3 - 0.3
-    card(s, x, BODY_TOP + 0.7, w, 2.5, WHITE, BORDER, accent_top=ACCENT)
+    card(s, x, BODY_TOP + 0.7, w, 2.5, CARD_FILL, BORDER, accent_top=ACCENT)
     tb(s, x + 0.34, BODY_TOP + 1.02, w - 0.68, 1.9,
        [{"runs": [{"t": head, "sz": 19, "b": True, "c": BLUE_DEEP}], "space_after": 10},
         {"runs": [{"t": desc, "sz": 13, "c": TEXT}], "line": 1.35, "space_after": 14},
@@ -244,7 +289,7 @@ for i, (icon, head, desc) in enumerate([
         ("📈", "一套报表", "按月、按科室、按病种统计数量与响应时长，还能一键导出成 Excel。")]):
     x = M + i * (CW / 3 + 0.001)
     w = CW / 3 - 0.3
-    card(s, x, BODY_TOP + 0.62, w, 3.0, WHITE, BORDER)
+    card(s, x, BODY_TOP + 0.62, w, 3.0, CARD_FILL, BORDER)
     tb(s, x + 0.34, BODY_TOP + 0.86, w - 0.68, 2.6,
        [{"runs": [{"t": icon, "sz": 26}], "space_after": 6},
         {"runs": [{"t": head, "sz": 18, "b": True, "c": BLUE_DEEP}], "space_after": 8},
@@ -305,7 +350,7 @@ kpis = [("示例病例", "5089", "含 12 个月历史，够看出趋势"),
 for i, (label, value, desc) in enumerate(kpis):
     x = M + i * (CW / 4 + 0.001)
     w = CW / 4 - 0.26
-    card(s, x, BODY_TOP + 0.55, w, 2.35, WHITE, BORDER, accent_top=ACCENT)
+    card(s, x, BODY_TOP + 0.55, w, 2.35, CARD_FILL, BORDER, accent_top=ACCENT)
     tb(s, x + 0.32, BODY_TOP + 0.82, w - 0.64, 1.9,
        [{"runs": [{"t": label, "sz": 11, "b": True, "c": MUTED}], "space_after": 6},
         {"runs": [{"t": value, "sz": 40, "b": True, "c": BLUE_DEEP}], "space_after": 8},
@@ -325,7 +370,7 @@ steps = [("① 产生", "120 送来 / 院内接诊\n或 HIS 系统推送", False
 bw2 = (CW - 4 * 0.42) / 5
 for i, (head, desc, hl) in enumerate(steps):
     x = M + i * (bw2 + 0.42)
-    card(s, x, BODY_TOP + 0.75, bw2, 1.95, WHITE, BORDER, accent_top=ACCENT if hl else None)
+    card(s, x, BODY_TOP + 0.75, bw2, 1.95, CARD_FILL, BORDER, accent_top=ACCENT if hl else None)
     tb(s, x + 0.16, BODY_TOP + 1.02, bw2 - 0.32, 1.5,
        [{"runs": [{"t": head, "sz": 15, "b": True, "c": BLUE_DEEP}], "align": PP_ALIGN.CENTER, "space_after": 8},
         {"runs": [{"t": desc, "sz": 10.5, "c": TEXT}], "align": PP_ALIGN.CENTER, "line": 1.3}])
@@ -361,7 +406,7 @@ for tname, cells, core in tiers:
     cwid = (CW - 1.15 - 0.18 - (len(cells) - 1) * 0.16) / len(cells)
     for i, cell in enumerate(cells):
         cx = cx0 + i * (cwid + 0.16)
-        card(s, cx, y, cwid, th, WHITE, BORDER, accent_top=ACCENT if core else None)
+        card(s, cx, y, cwid, th, CARD_FILL, BORDER, accent_top=ACCENT if core else None)
         if len(cell) == 3:
             icon, head, desc = cell
             paras = [{"runs": [{"t": icon, "sz": 15}], "align": PP_ALIGN.CENTER, "space_after": 2},
@@ -395,7 +440,7 @@ for i, (head, desc) in enumerate([("双击启动", "自动装依赖、建库、�
                                   ("开机自己起来", "装一次自启，之后重启电脑也不用管，大屏终端断电恢复即可用。")]):
     x = M + i * (CW / 4 + 0.001)
     w = CW / 4 - 0.26
-    card(s, x, BODY_TOP + 0.78, w, 2.4, WHITE, BORDER, accent_top=ACCENT)
+    card(s, x, BODY_TOP + 0.78, w, 2.4, CARD_FILL, BORDER, accent_top=ACCENT)
     num_dot(s, x + 0.5, BODY_TOP + 1.1, 0.42, str(i + 1), 14)
     tb(s, x + 0.3, BODY_TOP + 1.55, w - 0.6, 1.5,
        [{"runs": [{"t": head, "sz": 15, "b": True, "c": BLUE_DEEP}], "space_after": 8},
@@ -416,7 +461,7 @@ blocks = [(True, "本地完整版", "功能齐全，装在电脑上跑", "http:/
 for i, (good, tag, head, url, bullets) in enumerate(blocks):
     x = M + i * (CW / 2 + 0.2)
     w = CW / 2 - 0.2
-    card(s, x, BODY_TOP + 0.3, w, 4.05, WHITE, BORDER, accent_top=RGBColor(0x2E, 0x9E, 0x5B) if good else ACCENT)
+    card(s, x, BODY_TOP + 0.3, w, 4.05, CARD_FILL, BORDER, accent_top=GOOD if good else ACCENT)
     tb(s, x + 0.36, BODY_TOP + 0.6, w - 0.72, 3.5,
        [{"runs": [{"t": tag, "sz": 11.5, "b": True, "c": MUTED}], "space_after": 5},
         {"runs": [{"t": head, "sz": 18, "b": True, "c": BLUE_DEEP}], "space_after": 10},
@@ -453,26 +498,26 @@ tb(s, M, BODY_TOP + 4.35, CW, 0.5,
 s = prs.slides.add_slide(BLANK)
 bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
 bg.fill.solid()
-bg.fill.fore_color.rgb = RGBColor(0x0A, 0x2A, 0x52)
+bg.fill.fore_color.rgb = COVER_BG
 bg.line.fill.background()
 bg.shadow.inherit = False
 tb(s, 0.9, 1.35, 11.5, 1.9,
    [{"runs": [{"t": "现在就能用", "sz": 40, "b": True, "c": WHITE}], "align": PP_ALIGN.CENTER, "space_after": 12},
-    {"runs": [{"t": "三步：双击启动 → 浏览器打开 → 用 admin / Hospital@123 登录。", "sz": 16, "c": RGBColor(0xC8, 0xDC, 0xF2)}],
+    {"runs": [{"t": "三步：双击启动 → 浏览器打开 → 用 admin / Hospital@123 登录。", "sz": 16, "c": SOFT_ON_DARK}],
      "align": PP_ALIGN.CENTER}])
 for i, (head, desc) in enumerate([("启动", "双击项目根目录的「启动.bat」"),
                                   ("打开", "后台 /admin/ ｜ 大屏 /screen/"),
                                   ("停止", "双击「停止.bat」；取消自启用「取消开机自启.bat」")]):
     x = 0.9 + i * 3.95
-    card(s, x, 3.5, 3.7, 1.15, RGBColor(0x12, 0x3A, 0x69), RGBColor(0x2A, 0x5A, 0x94))
+    card(s, x, 3.5, 3.7, 1.15, COVER_CARD, BORDER)
     num_dot(s, x + 0.46, 4.08, 0.36, str(i + 1), 11)
     tb(s, x + 0.78, 3.72, 2.75, 0.85,
        [{"runs": [{"t": head, "sz": 13, "b": True, "c": WHITE}], "space_after": 3},
-        {"runs": [{"t": desc, "sz": 9.5, "c": RGBColor(0x9F, 0xC2, 0xE6)}], "line": 1.15}])
+        {"runs": [{"t": desc, "sz": 9.5, "c": LABEL_ON_DARK}], "line": 1.15}])
 tb(s, 0.9, 5.15, 11.5, 1.0,
    [{"runs": [{"t": "公网大屏：popostar11.github.io/hospital-data-platform", "sz": 14, "c": WHITE}],
      "align": PP_ALIGN.CENTER, "space_after": 8},
-    {"runs": [{"t": "全部数据为合成的示例数据，不代表任何真实机构或真实统计结果", "sz": 11.5, "c": RGBColor(0x7F, 0x9D, 0xC4)}],
+    {"runs": [{"t": "全部数据为合成的示例数据，不代表任何真实机构或真实统计结果", "sz": 11.5, "c": LABEL_ON_DARK}],
      "align": PP_ALIGN.CENTER}])
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
