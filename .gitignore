@@ -46,3 +46,6 @@ apps/worker/.wrangler/
 # 提交信息等临时文件
 *.commit-msg.tmp
 .commit-msg.tmp
+
+# PPT 构建与排版检查的临时产物（约定：docs/ppt 下以 _ 开头的都是临时的）
+docs/ppt/_*
