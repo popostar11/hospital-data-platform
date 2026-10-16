@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="corporate-clean">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>医院数据管理平台 · 急救绿道 —— 项目介绍</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" id="theme-link" href="assets/themes/corporate-clean.css">
+<link rel="stylesheet" href="assets/animations/animations.css">
+<style>
+/* ---------------------------------------------------------------- 通用 */
+.arrows{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap;flex:1;min-height:0}
+.arrows .box{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 18px;box-shadow:var(--shadow);text-align:center}
+.arrows .box .ic{font-size:26px}
+.arrows .box h4{font-size:15px;margin:8px 0 4px}
+.arrows .box p{font-size:12px;color:var(--text-3);margin:0;line-height:1.5}
+.arrows .ar{font-size:24px;color:var(--accent);font-weight:800;flex:0 0 auto}
+.arrows .box.hl{border-top:3px solid var(--accent)}
+
+/* ---------------------------------------------------------------- 图例 */
+.legend{display:grid;gap:10px;margin-top:16px}
+.legend.g5{grid-template-columns:repeat(5,1fr)}
+.legend.g3{grid-template-columns:repeat(3,1fr)}
+.legend.g4{grid-template-columns:repeat(4,1fr)}
+.lg{display:flex;gap:9px;align-items:flex-start;background:var(--surface-2);border-radius:var(--radius-sm);padding:10px 12px}
+.lg .dot{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.lg .dot.sq{border-radius:5px}
+.lg b{display:block;font-size:12.5px;color:var(--text-1)}
+.lg span{display:block;font-size:11px;color:var(--text-3);line-height:1.45;margin-top:2px}
+
+/* 卡片内编号徽标：不用绝对定位，避免溢出被 slide 的 overflow 裁掉 */
+.numbadge{width:42px;height:42px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
+
+/* 图上编号标记。
+   框按 16/9 严格等于截图比例 —— 这样编号的百分比坐标就是图内容的真实坐标；
+   若用 contain 留白，框比图大，百分比定位会整体偏移。 */
+.shot{position:relative;display:flex;flex-direction:column;min-height:0}
+.shot .img-frame{position:relative;aspect-ratio:16/9;height:100%;width:auto;max-width:100%;align-self:center;margin:0 auto}
+.mark{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
+  box-shadow:0 0 0 3px var(--bg);transform:translate(-50%,-50%);z-index:3}
+
+/* 表格化对比 */
+.tbl{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+.tbl th{text-align:left;padding:11px 14px;background:var(--surface-2);color:var(--text-2);font-size:12px;
+  letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:top}
+.tbl td b{color:var(--text-1)}
+.tbl tr:last-child td{border-bottom:none}
+.ok{color:var(--good);font-weight:700}
+.warnc{color:var(--warn);font-weight:700}
+</style>
+</head>
+<body data-themes="corporate-clean,minimal-white,arctic-cool,blueprint,tokyo-night,pitch-deck-vc" data-theme-base="assets/themes/">
+<div class="deck">
+
+  <!-- ============================================================ 1 封面 -->
+  <section class="slide" data-title="封面">
+    <p class="kicker">项目介绍 · 2026</p>
+    <h1 class="h1 anim-fade-up" data-anim="fade-up">医院数据管理平台<br><span class="gradient-text">急救绿道</span></h1>
+    <p class="lede" style="max-width:44ch">一块大屏看全局，一个后台管细节。<br>这份 PPT 用大白话讲清楚：<b>它是什么、怎么做的、怎么用</b>。</p>
+    <div class="legend g3 mt-l" style="max-width:900px">
+      <div class="lg"><span class="dot">1</span><div><b>全自动</b><span>双击启动，之后开机即用、崩了自愈</span></div></div>
+      <div class="lg"><span class="dot">2</span><div><b>有验收</b><span>71 项自动化检查，改坏了立刻知道</span></div></div>
+      <div class="lg"><span class="dot">3</span><div><b>已脱敏</b><span>示例机构名与合成数据，可安全公开</span></div></div>
+    </div>
+    <div class="deck-footer"><span class="dim2">医院数据管理平台 · 急救绿道</span><span class="slide-number" data-current="1" data-total="13"></span></div>
+    <div class="notes">开场一句话：这个项目就是把急救绿道的数据，变成一块能挂在墙上的大屏，加一个能录入和维护数据的后台。全程不需要懂技术也能听明白。</div>
+  </section>
+
+  <!-- ============================================================ 2 目录 -->
+  <section class="slide" data-title="目录">
+    <p class="kicker">目录</p>
+    <h2 class="h2">今天只讲三个问题</h2>
+    <div class="grid g3 mt-l anim-stagger-list" data-anim-target>
+      <div class="card card-accent">
+        <h4>01 · 它是什么</h4>
+        <p class="dim">谁在用、解决什么问题、长什么样。</p>
+        <p class="dim2" style="margin-top:10px">第 3 ~ 6 页</p>
+      </div>
+      <div class="card card-accent">
+        <h4>02 · 怎么做的</h4>
+        <p class="dim">数据怎么流、系统分几层、为什么这么选。</p>
+        <p class="dim2" style="margin-top:10px">第 7 ~ 11 页</p>
+      </div>
+      <div class="card card-accent">
+        <h4>03 · 怎么用</h4>
+        <p class="dim">两个入口、怎么打开、怎么验收到位。</p>
+        <p class="dim2" style="margin-top:10px">第 12 ~ 13 页</p>
+      </div>
+    </div>
+    <div class="notes">先给听众一个路线图，避免一上来就讲技术。强调后半段才涉及实现，前半段任何人都能听懂。</div>
+  </section>
+
+  <!-- ============================================================ 3 它是什么 -->
+  <section class="slide" data-title="它是什么">
+    <p class="kicker">01 · 它是什么</p>
+    <h2 class="h2">一句话：把「急救快不快」变成看得见的数字</h2>
+    <p class="lede" style="margin-top:8px">过去要翻表格、打电话问；现在抬头看屏幕就知道。</p>
+    <div class="grid g3 mt-l anim-stagger-list" data-anim-target>
+      <div class="card">
+        <div style="font-size:34px">🖥️</div>
+        <h4 style="margin-top:8px">一块大屏</h4>
+        <p class="dim">挂在急诊、医务科或指挥中心。患者从呼救到进入绿道，实时滚动，谁都能看。</p>
+      </div>
+      <div class="card">
+        <div style="font-size:34px">🗂️</div>
+        <h4 style="margin-top:8px">一个后台</h4>
+        <p class="dim">医生护士录病例、补齐时间节点、维护疾病字典；管理员管账号和权限。</p>
+      </div>
+      <div class="card">
+        <div style="font-size:34px">📈</div>
+        <h4 style="margin-top:8px">一套报表</h4>
+        <p class="dim">按月、按科室、按病种统计数量与响应时长，还能一键导出成 Excel。</p>
+      </div>
+    </div>
+    <div class="notes">这一页不要讲技术。用「抬头的屏幕 / 手里的表格 / 月底的报表」三个生活化说法建立画面感。可以问一句：咱们现在统计这些数据要花多久？</div>
+  </section>
+
+  <!-- ============================================================ 4 大屏（含图例） -->
+  <section class="slide" data-title="大屏">
+    <p class="kicker">01 · 它是什么</p>
+    <h2 class="h2">大屏长这样：五个区域，各有分工</h2>
+    <div style="display:grid;grid-template-columns:1.62fr 1fr;gap:26px;margin-top:14px;flex:1;min-height:0">
+      <div class="shot anim-fade-up" data-anim="fade-up">
+        <figure class="img-frame contain">
+          <img src="images/screen.png" alt="急救绿道大屏实机截图">
+          <span class="mark" style="left:86%;top:4.5%">1</span>
+          <span class="mark" style="left:16%;top:31%">2</span>
+          <span class="mark" style="left:66%;top:30%">3</span>
+          <span class="mark" style="left:12%;top:60%">4</span>
+          <span class="mark" style="left:50%;top:92%">5</span>
+        </figure>
+        <p class="img-cap" style="text-align:center">图 1 · 1920×1080 实机渲染（数据为合成演示数据）</p>
+      </div>
+      <div class="legend" style="margin-top:0;align-content:start">
+        <div class="lg"><span class="dot">1</span><div><b>顶部标题栏</b><span>机构名称 + 实时时钟，一眼确认"这屏是活的"</span></div></div>
+        <div class="lg"><span class="dot">2</span><div><b>累计患者饼图</b><span>绿道总人数，点一下可切到别的病种</span></div></div>
+        <div class="lg"><span class="dot">3</span><div><b>近 12 个月柱状图</b><span>看趋势；最后一个月标注"本月至今"，不会显得掉量</span></div></div>
+        <div class="lg"><span class="dot">4</span><div><b>24 小时内患者表</b><span>姓名（脱敏）、病种、推送方式、距离、状态；超一屏自动无缝滚动</span></div></div>
+        <div class="lg"><span class="dot">5</span><div><b>底部统计条</b><span>各病种未闭环数量，提醒还有谁没走完流程</span></div></div>
+      </div>
+    </div>
+    <div class="notes">图例里 1~5 对应图上的圆点编号，逐个指过去讲。重点强调第 4 区的「无缝滚动」和姓名脱敏——这两点最容易被问到。</div>
+  </section>
+
+  <!-- ============================================================ 5 后台 -->
+  <section class="slide" data-title="后台">
+    <p class="kicker">01 · 它是什么</p>
+    <h2 class="h2">后台管细节：谁都能上手，但谁都不能越权</h2>
+    <div style="display:grid;grid-template-columns:1.28fr 1fr;gap:40px;margin-top:16px;flex:1;min-height:0">
+      <div class="shot anim-fade-left" data-anim="fade-left">
+        <figure class="img-frame contain">
+          <img src="images/admin.png" alt="后台工作台实机截图">
+        </figure>
+        <p class="img-cap" style="text-align:center">图 2 · 后台工作台：今日新增、在绿道中、超时提醒、7 日趋势</p>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <div class="legend g2 anim-stagger-list" data-anim-target style="margin-top:0">
+          <div class="lg"><span class="dot sq">A</span><div><b>病例管理</b><span>新建、改、闭环、补时间节点</span></div></div>
+          <div class="lg"><span class="dot sq">B</span><div><b>患者管理</b><span>姓名自动脱敏，明文查看单独授权且留痕</span></div></div>
+          <div class="lg"><span class="dot sq">C</span><div><b>字典维护</b><span>病种、推送方式、状态都能自己改</span></div></div>
+          <div class="lg"><span class="dot sq">D</span><div><b>组织人员</b><span>科室树 + 账号 + 角色权限</span></div></div>
+          <div class="lg"><span class="dot sq">E</span><div><b>报表统计</b><span>月报、质控 KPI、导出 Excel</span></div></div>
+          <div class="lg"><span class="dot sq">F</span><div><b>审计日志</b><span>谁在什么时候改了什么，全留底</span></div></div>
+        </div>
+        <p class="lede" style="margin-top:22px;font-size:16px">
+          七种角色：管理员、急诊管理员、医生、护士、质控、院领导、大屏终端。
+          <b>院领导看不到患者明文，护士进不了审计页</b>——这是系统自己拦的，不靠人自觉。
+        </p>
+      </div>
+    </div>
+    <div class="notes">左边是真实截图，右边 A~F 是六个模块的图例。最后一句是重点：权限是系统强制拦截的，现场可以演示护士访问审计页会被跳转到 403。</div>
+  </section>
+
+  <!-- ============================================================ 6 关键数字 -->
+  <section class="slide" data-title="关键数字">
+    <p class="kicker">01 · 它是什么</p>
+    <h2 class="h2">用数字感受一下这套系统</h2>
+    <div class="grid g4 mt-l anim-stagger-list" data-anim-target>
+      <div class="card card-accent"><p class="eyebrow">示例病例</p>
+        <div style="font-size:52px;font-weight:800"><span class="counter" data-to="5089">0</span></div>
+        <p class="dim">含 12 个月历史，够看出趋势</p></div>
+      <div class="card card-accent"><p class="eyebrow">时间节点</p>
+        <div style="font-size:52px;font-weight:800"><span class="counter" data-to="30689">0</span></div>
+        <p class="dim">每个病例 6 个环节，用来算时长</p></div>
+      <div class="card card-accent"><p class="eyebrow">自动化验收</p>
+        <div style="font-size:52px;font-weight:800"><span class="counter" data-to="71">0</span></div>
+        <p class="dim">改代码后自动跑，坏了立刻知道</p></div>
+      <div class="card card-accent"><p class="eyebrow">页面</p>
+        <div style="font-size:52px;font-weight:800"><span class="counter" data-to="14">0</span></div>
+        <p class="dim">大屏 1 页 + 后台 13 页</p></div>
+    </div>
+    <p class="lede" style="margin-top:26px">冷启动（全新电脑、什么都没装）：<b>双击一个文件，30 秒内自动装好依赖、建库、灌数据、打开浏览器</b>。</p>
+    <div class="notes">数字只是为了建立体量感，不用逐字念。最后一句「30 秒冷启动」是真正会让人有体感的点，可以展开讲：连 pnpm 都不用装。</div>
+  </section>
+
+  <!-- ============================================================ 7 数据流（含图例） -->
+  <section class="slide" data-title="数据怎么流">
+    <p class="kicker">02 · 怎么做的</p>
+    <h2 class="h2">一条数据从产生到上屏，走五步</h2>
+    <div class="arrows anim-stagger-list" data-anim-target>
+      <div class="box"><div class="ic">🚑</div><h4>① 产生</h4><p>120 送来 / 院内接诊<br>或 HIS 系统推送</p></div>
+      <div class="ar">→</div>
+      <div class="box"><div class="ic">⌨️</div><h4>② 录入</h4><p>后台填病例<br>或接口自动创建</p></div>
+      <div class="ar">→</div>
+      <div class="box hl"><div class="ic">🗄️</div><h4>③ 存储</h4><p>一个 SQLite 数据库文件<br>时间统一存本地时区</p></div>
+      <div class="ar">→</div>
+      <div class="box hl"><div class="ic">🧮</div><h4>④ 聚合</h4><p>服务端算好饼图 / 柱状图<br>大屏不用自己算</p></div>
+      <div class="ar">→</div>
+      <div class="box"><div class="ic">📺</div><h4>⑤ 展示</h4><p>大屏 + 后台 + 报表<br>同时拿到同一份数据</p></div>
+    </div>
+    <div class="legend g4 mt-l">
+      <div class="lg"><span class="dot sq">▌</span><div><b>蓝边 = 服务端在做的事</b><span>③④两步是关键：算在服务端，屏幕只负责画</span></div></div>
+      <div class="lg"><span class="dot sq">↻</span><div><b>实时刷新</b><span>有新数据就推送信号，大屏 1~3 秒内更新</span></div></div>
+      <div class="lg"><span class="dot sq">⏱</span><div><b>兜底轮询</b><span>推送断了也不会卡死，按周期自己拉一次</span></div></div>
+      <div class="lg"><span class="dot sq">📅</span><div><b>月度归集</b><span>柱状图按"年-月"分组，跨年也不会乱</span></div></div>
+    </div>
+    <div class="notes">讲这张图时强调一个设计取舍：把计算放在服务端，大屏只负责画。好处是以后换屏幕、加屏幕都不用改逻辑，而且弱电脑也能流畅跑。</div>
+  </section>
+
+  <!-- ============================================================ 8 架构（含图例） -->
+  <section class="slide" data-title="系统架构">
+    <p class="kicker">02 · 怎么做的</p>
+    <h2 class="h2">系统分四层，各管各的</h2>
+    <div style="display:grid;grid-template-rows:auto auto auto auto;gap:14px;margin-top:16px">
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:18px;align-items:stretch">
+        <div style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:var(--radius);font-weight:600;font-size:12px;color:var(--text-2);text-align:center;padding:12px">使用者</div>
+        <div class="grid g3" style="gap:14px">
+          <div class="card" style="padding:14px;text-align:center"><div style="font-size:22px">👩‍⚕️</div><h4 style="font-size:14px;margin:6px 0 2px">医生 / 护士</h4><p class="dim2">录入与跟进</p></div>
+          <div class="card" style="padding:14px;text-align:center"><div style="font-size:22px">📋</div><h4 style="font-size:14px;margin:6px 0 2px">质控 / 领导</h4><p class="dim2">看报表与指标</p></div>
+          <div class="card" style="padding:14px;text-align:center"><div style="font-size:22px">📺</div><h4 style="font-size:14px;margin:6px 0 2px">大屏终端</h4><p class="dim2">只读展示</p></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:18px;align-items:stretch">
+        <div style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:var(--radius);font-weight:600;font-size:12px;color:var(--text-2);text-align:center;padding:12px">前端</div>
+        <div class="grid g2" style="gap:14px">
+          <div class="card card-accent" style="padding:14px;text-align:center"><div style="font-size:22px">🖥️</div><h4 style="font-size:14px;margin:6px 0 2px">大屏端</h4><p class="dim2">Vue 3 + ECharts，手写 HUD 界面</p></div>
+          <div class="card card-accent" style="padding:14px;text-align:center"><div style="font-size:22px">🗂️</div><h4 style="font-size:14px;margin:6px 0 2px">后台端</h4><p class="dim2">Vue 3 + Element Plus，13 个页面</p></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:18px;align-items:stretch">
+        <div style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:var(--radius);font-weight:600;font-size:12px;color:var(--text-2);text-align:center;padding:12px">后端</div>
+        <div class="grid g3" style="gap:14px">
+          <div class="card card-accent" style="padding:14px;text-align:center"><h4 style="font-size:14px;margin:0 0 2px">登录与权限</h4><p class="dim2">7 种角色、登录令牌、操作留痕</p></div>
+          <div class="card card-accent" style="padding:14px;text-align:center"><h4 style="font-size:14px;margin:0 0 2px">业务接口</h4><p class="dim2">病例 / 患者 / 字典 / 组织 / 审计</p></div>
+          <div class="card card-accent" style="padding:14px;text-align:center"><h4 style="font-size:14px;margin:0 0 2px">统计与推送</h4><p class="dim2">报表聚合、质控指标、实时信号</p></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:18px;align-items:stretch">
+        <div style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:var(--radius);font-weight:600;font-size:12px;color:var(--text-2);text-align:center;padding:12px">数据</div>
+        <div class="grid g2" style="gap:14px">
+          <div class="card" style="padding:14px;text-align:center"><h4 style="font-size:14px;margin:0 0 2px">SQLite 数据库</h4><p class="dim2">15 张表，单文件，随项目走</p></div>
+          <div class="card" style="padding:14px;text-align:center"><h4 style="font-size:14px;margin:0 0 2px">D1 云数据库</h4><p class="dim2">公网版用同一套表结构</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="legend g3 mt-l">
+      <div class="lg"><span class="dot sq">▌</span><div><b>蓝色上边框 = 核心</b><span>前端、后端这两层是项目的主体</span></div></div>
+      <div class="lg"><span class="dot sq">□</span><div><b>无蓝边 = 配套</b><span>使用者与数据层，改动少</span></div></div>
+      <div class="lg"><span class="dot sq">⇅</span><div><b>上下依赖单向</b><span>每层只调用下一层，不反向依赖</span></div></div>
+    </div>
+    <div class="notes">四个横条就是四层。讲图例：蓝边的是我们花力气做的两层。强调单向依赖——这是为什么以后想把 SQLite 换成别的数据库，只动最底下一层就行。</div>
+  </section>
+
+  <!-- ============================================================ 9 随时能用 -->
+  <section class="slide" data-title="随时能用">
+    <p class="kicker">02 · 怎么做的</p>
+    <h2 class="h2">「随时能打开」是怎么做到的</h2>
+    <p class="lede" style="margin-top:6px">起因是一个真实的坑：服务跑在前台窗口里，<b>按 Ctrl+C 想复制文字，结果把服务关了</b>。</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:30px">
+      <div class="card card-accent" style="padding:24px">
+        <div class="numbadge">1</div>
+        <h4 style="margin:14px 0 8px">双击启动</h4><p class="dim" style="font-size:13px">自动装依赖、建库、灌数据、打开浏览器，缺哪步补哪步。</p></div>
+      <div class="card card-accent" style="padding:24px">
+        <div class="numbadge">2</div>
+        <h4 style="margin:14px 0 8px">交给守护进程</h4><p class="dim" style="font-size:13px">服务在后台跑，<b>没有窗口</b>，Ctrl+C 和误关窗口都影响不到它。</p></div>
+      <div class="card card-accent" style="padding:24px">
+        <div class="numbadge">3</div>
+        <h4 style="margin:14px 0 8px">崩了自动拉起</h4><p class="dim" style="font-size:13px">进程一退出，3 秒内自动重启。实测强杀后 12 秒恢复正常。</p></div>
+      <div class="card card-accent" style="padding:24px">
+        <div class="numbadge">4</div>
+        <h4 style="margin:14px 0 8px">开机自己起来</h4><p class="dim" style="font-size:13px">装一次自启，之后重启电脑也不用管，大屏终端断电恢复即可用。</p></div>
+    </div>
+    <p class="lede" style="margin-top:30px">另外：演示数据会随日期自动"保鲜"，隔几天再打开，大屏<b>不会出现空白表格</b>。</p>
+    <div class="notes">这页是真实踩坑后改的，讲的时候可以坦白讲事故经过，比讲设计更有说服力。第 4 点如果现场是大屏终端，强调断电重启后自动恢复。</div>
+  </section>
+
+  <!-- ============================================================ 10 两个入口 -->
+  <section class="slide" data-title="两个入口">
+    <p class="kicker">03 · 怎么用</p>
+    <h2 class="h2">两个入口，按需要选</h2>
+    <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:24px;margin-top:24px;align-items:stretch">
+      <div class="card" style="padding:28px;border-top:3px solid var(--good)">
+        <p class="eyebrow">本地完整版</p>
+        <h3 style="font-size:20px;margin:6px 0 12px">功能齐全，装在电脑上跑</h3>
+        <p class="mono" style="font-size:13px;background:var(--surface-2);padding:9px 12px;border-radius:var(--radius-sm)">http://127.0.0.1:3000/admin/</p>
+        <ul style="padding-left:18px;font-size:14px;line-height:1.9;color:var(--text-2);margin-top:14px">
+          <li>登录、增删改、报表导出<b>全都能用</b></li>
+          <li>数据存在本机，不外传</li>
+          <li>双击「启动.bat」即可，无需装环境</li>
+          <li>适合：院内日常使用、演示汇报</li>
+        </ul>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--text-3);font-weight:800">+</div>
+      <div class="card" style="padding:28px;border-top:3px solid var(--accent)">
+        <p class="eyebrow">公网演示版</p>
+        <h3 style="font-size:20px;margin:6px 0 12px">发个链接就能看，装了就能用</h3>
+        <p class="mono" style="font-size:13px;background:var(--surface-2);padding:9px 12px;border-radius:var(--radius-sm)">popostar11.github.io/hospital-data-platform</p>
+        <ul style="padding-left:18px;font-size:14px;line-height:1.9;color:var(--text-2);margin-top:14px">
+          <li>任何人、任何设备打开即看大屏</li>
+          <li>数据是导出的<b>静态快照</b>，只读</li>
+          <li>不需要服务器、不需要账号、不花钱</li>
+          <li>适合：分享给同行、外出演示</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notes">两个入口是互补关系，不是二选一。公网版只有大屏，因为后台必须连后端——这点要提前说清楚，避免听众去公网找后台。</div>
+  </section>
+
+  <!-- ============================================================ 11 技术选型 -->
+  <section class="slide" data-title="技术选型">
+    <p class="kicker">02 · 怎么做的</p>
+    <h2 class="h2">几个关键选择，以及为什么</h2>
+    <table class="tbl">
+      <thead><tr><th style="width:20%">选择</th><th style="width:26%">决定了什么</th><th>为什么这么定</th></tr></thead>
+      <tbody>
+        <tr><td><b>SQLite 单文件数据库</b></td><td>不用装 MySQL</td><td>院内一台电脑就能跑，拷走一个文件就是完整备份；数据量到几十万条都够用</td></tr>
+        <tr><td><b>大屏与后台分成两个前端</b></td><td>互不影响</td><td>大屏要 7×24 常驻、不能被后台改崩；分开后各自升级，大屏可以只读锁定</td></tr>
+        <tr><td><b>计算放在服务端</b></td><td>屏幕只管画</td><td>换屏幕、加屏幕不用改逻辑，弱配置的终端也能流畅</td></tr>
+        <tr><td><b>公网版重写一层后端</b></td><td>能上 Cloudflare 免费额度</td><td>云函数跑不了本地数据库和 NestJS；重写的是"壳"，接口和算法口径与本地版保持一致</td></tr>
+        <tr><td><b>机构名与数据全部脱敏</b></td><td>可以安全公开</td><td>示例机构名 + 合成数据，真实素材不进仓库；公开仓库里搜不到任何真实名称</td></tr>
+      </tbody>
+    </table>
+    <div class="notes">这页给技术听众。如果听众偏业务，可以只讲第一行和最后一行：不用装数据库、数据已脱敏可以放心分享。</div>
+  </section>
+
+  <!-- ============================================================ 12 验收 -->
+  <section class="slide" data-title="怎么验收">
+    <p class="kicker">03 · 怎么用</p>
+    <h2 class="h2">改完代码，用 71 项检查确认没坏</h2>
+    <table class="tbl">
+      <thead><tr><th style="width:26%">验收套件</th><th style="width:14%">项数</th><th>检查什么</th></tr></thead>
+      <tbody>
+        <tr><td><b>接口验收</b></td><td><span class="ok">37 项</span></td><td>把大屏上的每个数字都钉死成断言：累计人数、12 个月序列、24 小时表格内容、筛选排序、权限拦截</td></tr>
+        <tr><td><b>大屏验收</b></td><td><span class="ok">7 项</span></td><td>真浏览器打开：标题、8 列表头、姓名脱敏、无缝滚动，并输出 1920×1080 截图</td></tr>
+        <tr><td><b>后台验收</b></td><td><span class="ok">18 项</span></td><td>真实登录后逐页巡检 13 个页面，并验证越权会被拦</td></tr>
+        <tr><td><b>公网版验收</b></td><td><span class="ok">33 项</span></td><td>额外确认"响应里不出现真实机构名"和"不提供患者明文"</td></tr>
+        <tr><td><b>批处理编码检查</b></td><td><span class="ok">1 项</span></td><td>防止中文写进 .bat 导致命令解析错乱——这是踩过的坑，做成回归守卫</td></tr>
+      </tbody>
+    </table>
+    <p class="lede" style="margin-top:20px">全部只依赖系统自带的 Node 和 Chrome，<b>不需要装 Playwright 之类的测试框架</b>。</p>
+    <div class="notes">这页回答"怎么保证质量"。重点：验收脚本本身没有额外依赖，任何一台装了 Node 的电脑都能跑，所以不会被环境问题卡住。</div>
+  </section>
+
+  <!-- ============================================================ 13 结尾 -->
+  <section class="slide center tc" data-title="开始使用">
+    <div>
+      <p class="kicker">03 · 怎么用</p>
+      <h1 class="h1 anim-rise-in" data-anim="rise-in">现在就能用</h1>
+      <p class="lede" style="margin:14px auto 26px;max-width:52ch">三步：双击启动 → 浏览器打开 → 用 <b>admin / Hospital@123</b> 登录。</p>
+      <div class="legend g3" style="max-width:1000px;text-align:left">
+        <div class="lg"><span class="dot">1</span><div><b>启动</b><span>双击项目根目录的「启动.bat」</span></div></div>
+        <div class="lg"><span class="dot">2</span><div><b>打开</b><span>后台 /admin/ ｜ 大屏 /screen/</span></div></div>
+        <div class="lg"><span class="dot">3</span><div><b>停止</b><span>双击「停止.bat」；取消自启用「取消开机自启.bat」</span></div></div>
+      </div>
+      <p class="lede" style="margin-top:30px;font-size:15px">
+        公网大屏：<span class="mono">popostar11.github.io/hospital-data-platform</span><br>
+        <span class="dim2">全部数据为合成的示例数据，不代表任何真实机构或真实统计结果</span>
+      </p>
+    </div>
+    <div class="deck-footer"><span class="dim2">医院数据管理平台 · 急救绿道</span><span class="slide-number" data-current="13" data-total="13"></span></div>
+    <div class="notes">收尾给三个动作，方便现场跟着操作。提醒一句页面上写死的演示账号只用于演示，正式使用要改密码。</div>
+  </section>
+
+</div>
+<script src="assets/runtime.js"></script>
+</body></html>
