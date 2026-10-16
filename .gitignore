@@ -43,3 +43,6 @@ apps/worker/seed.sql
 apps/worker/.dev.vars
 apps/worker/.wrangler/
 
+# 提交信息等临时文件
+*.commit-msg.tmp
+.commit-msg.tmp
