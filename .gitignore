@@ -49,3 +49,7 @@ apps/worker/.wrangler/
 
 # PPT 构建与排版检查的临时产物（约定：docs/ppt 下以 _ 开头的都是临时的）
 docs/ppt/_*
+
+# Office 打开文件时生成的锁文件（~\.pptx / ~WRL*.tmp）
+~\$*
+~WRL*
