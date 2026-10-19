@@ -29,8 +29,10 @@
     "verify:api": "node tools/verify-api.mjs",
     "verify:screen": "node tools/verify-screen.mjs",
     "verify:admin": "node tools/verify-admin.mjs",
+    "verify:patient": "node tools/verify-patient.mjs",
     "verify:worker": "node tools/verify-worker.mjs",
     "shot:screen": "node tools/screenshot.mjs \"http://127.0.0.1:3000/screen/?stream=0\" docs/refs/screen-shot.png 1920 1080",
+    "shot:admin": "node tools/shot-admin-page.mjs \"#/patients\" docs/refs/admin-patients.png 1600 900",
     "typecheck": "pnpm build:shared && pnpm -r typecheck"
   },
   "engines": {

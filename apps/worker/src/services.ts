@@ -163,17 +163,46 @@ interface PatientRow {
   remark: string | null
   visitCount: number
   createdAt: string
+  /* 关联出来的最近一条病例（无病例时为 null） */
+  caseId?: number | null
+  caseNo?: string | null
+  diseaseCode?: string | null
+  sourceType?: string | null
+  statusCode?: string | null
+  caseCreatedAt?: string | null
 }
 
+/**
+ * 患者 + 最近一条绿道病例。
+ * 病例子查询只取每个患者的 MAX(id)（最新一条），患者管理列表直接消费这些拍平字段。
+ */
 export const SELECT_PATIENT = /* sql */ `
   SELECT p.id, p.mrn, p.name_masked AS nameMasked, p.gender, p.birth_date AS birthDate,
          p.id_card_masked AS idCardMasked, p.phone_masked AS phoneMasked, p.remark,
          p.created_at AS createdAt,
-         (SELECT COUNT(*) FROM green_channel_case c WHERE c.patient_id = p.id AND c.deleted_at IS NULL) AS visitCount
+         (SELECT COUNT(*) FROM green_channel_case x WHERE x.patient_id = p.id AND x.deleted_at IS NULL) AS visitCount,
+         c.id AS caseId, c.case_no AS caseNo, c.disease_code AS diseaseCode,
+         c.source_type AS sourceType, c.status_code AS statusCode, c.created_at AS caseCreatedAt
     FROM patient p
+    LEFT JOIN (
+      SELECT patient_id, MAX(id) AS cid
+        FROM green_channel_case
+       WHERE deleted_at IS NULL
+       GROUP BY patient_id
+    ) l ON l.patient_id = p.id
+    LEFT JOIN green_channel_case c ON c.id = l.cid
 `
 
-export function toPatientListItem(row: PatientRow): PatientListItem {
+export interface PatientDicts {
+  disease?: Map<string, DictRow>
+  source?: Map<string, DictRow>
+  status?: Map<string, DictRow>
+}
+
+export function toPatientListItem(row: PatientRow, dicts: PatientDicts = {}): PatientListItem {
+  const disease = row.diseaseCode ? dicts.disease?.get(row.diseaseCode) : undefined
+  const source = row.sourceType ? dicts.source?.get(row.sourceType) : undefined
+  const status = row.statusCode ? dicts.status?.get(row.statusCode) : undefined
   return {
     id: row.id,
     mrn: row.mrn,
@@ -185,6 +214,19 @@ export function toPatientListItem(row: PatientRow): PatientListItem {
     idCardMasked: row.idCardMasked,
     visitCount: row.visitCount ?? 0,
     createdAt: formatDate(row.createdAt),
+    remark: row.remark,
+    lastCaseId: row.caseId ?? null,
+    lastCaseNo: row.caseNo ?? null,
+    diseaseCode: row.diseaseCode ?? null,
+    diseaseName: disease?.name ?? row.diseaseCode ?? null,
+    diseaseColor: disease?.color ?? null,
+    sourceType: row.sourceType ?? null,
+    sourceTypeName: source?.name ?? row.sourceType ?? null,
+    sourceColor: source?.color ?? null,
+    statusCode: row.statusCode ?? null,
+    statusName: status?.name ?? row.statusCode ?? null,
+    statusColor: status?.color ?? null,
+    lastVisitAt: row.caseCreatedAt ? formatDate(row.caseCreatedAt) : null,
   }
 }
 

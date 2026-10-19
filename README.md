@@ -158,11 +158,13 @@ yiyuanshujuguanlixitong/
 | `pnpm verify:api` | 接口验收：36 项断言，把合成演示数据固化成测试 |
 | `pnpm verify:screen` | 大屏验收：渲染、脱敏、无缝滚动、截图（走 Chrome DevTools 协议） |
 | `pnpm verify:admin` | 后台验收：真实登录 + 10 个页面巡检 + 越权守卫 |
+| `pnpm verify:patient` | 患者管理增强验收（25 项）：三个筛选、导出 CSV、批量导入、批量删除、权限 |
 | `pnpm verify:worker` | Cloudflare 版契约验收（33 项，需先启动 worker） |
 | `pnpm worker:dev` / `worker:deploy` | 本地启动 / 部署 Cloudflare Worker |
 | `pnpm worker:seed` / `worker:assets` | 生成 D1 导入 SQL / 汇总前端产物 |
 | `pnpm typecheck` | 全仓类型检查 |
 | `pnpm shot:screen` | 单独出一张 1920×1080 大屏截图到 `docs/refs/` |
+| `pnpm shot:admin` | 任意后台页面截图（注入登录态直达，用于目视核对；参数：`#/patients 输出路径 宽 高`） |
 
 验收脚本只依赖 Node 内置能力（`fetch` / `WebSocket` / `child_process`），不需要 Playwright、Puppeteer 等额外依赖；本机装有 Chrome 或 Edge 即可运行。
 

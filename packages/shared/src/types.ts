@@ -185,11 +185,53 @@ export interface PatientListItem {
   idCardMasked: string | null
   visitCount: number
   createdAt: string
+  /** 患者备注（列表直接展示，明细里同名字段） */
+  remark: string | null
+  /* ---- 以下为「最近一条绿道病例」的拍平字段，供患者管理列表直接展示 ----
+     没有病例的患者这些字段全为 null，不影响患者表单、远程搜索等既有用途 */
+  lastCaseId: number | null
+  lastCaseNo: string | null
+  diseaseCode: string | null
+  diseaseName: string | null
+  diseaseColor: string | null
+  sourceType: string | null
+  sourceTypeName: string | null
+  sourceColor: string | null
+  statusCode: string | null
+  statusName: string | null
+  statusColor: string | null
+  /** 最近一次就诊（病例创建）时间 */
+  lastVisitAt: string | null
+}
+
+/** 患者列表查询条件：除关键字外，支持按「最近一条病例」的疾病 / 状态 / 推送方式筛选 */
+export interface PatientListQuery extends PageQuery {
+  keyword?: string
+  diseaseCode?: string
+  statusCode?: string
+  sourceType?: string
+}
+
+/** 批量导入的一行（前端把 CSV 解析成这个结构提交；性别可传中文「男/女」） */
+export interface PatientImportRow {
+  name: string
+  gender?: GenderCode | string
+  birthDate?: string | null
+  mrn?: string | null
+  idCard?: string | null
+  phone?: string | null
+  remark?: string | null
+}
+
+export interface PatientImportResult {
+  total: number
+  created: number
+  skipped: number
+  errors: { row: number; message: string }[]
 }
 
 export interface PatientDetail extends PatientListItem {
   birthDate: string | null
-  remark: string | null
 }
 
 /** 明文查看（需 patient:plain 权限，且写审计日志） */
