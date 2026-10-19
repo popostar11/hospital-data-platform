@@ -6,7 +6,11 @@
  *
  * 前置：
  *   1. node tools/export-static-demo.mjs                 （生成快照）
- *   2. PAGES_BASE=/<仓库名>/ pnpm --filter @hospital/screen-web build
+ *   2. PAGES_BASE=/<仓库名>/screen/ pnpm --filter @hospital/screen-web build
+ *
+ *   注意基准值必须带 /screen/：本脚本把 dist 发布到 gh-pages 的 screen/ 子目录下，
+ *   漏掉 /screen/ 会让 index.html 去 /<仓库名>/assets/ 找资源而 404。
+ *
  *   3. 环境变量里有 GITHUB_TOKEN（或用参数传）
  *
  * 用法：
@@ -56,7 +60,7 @@ async function gh(path, init = {}) {
 if (!existsSync(join(DIST, 'index.html'))) {
   console.error(`[错误] 未找到构建产物：${DIST}`)
   console.error('       请先执行：node tools/export-static-demo.mjs')
-  console.error('                 PAGES_BASE=/hospital-data-platform/ pnpm --filter @hospital/screen-web build')
+  console.error('                 PAGES_BASE=/hospital-data-platform/screen/ pnpm --filter @hospital/screen-web build')
   process.exit(1)
 }
 if (!existsSync(join(DIST, 'demo-screen.json'))) {
