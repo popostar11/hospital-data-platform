@@ -467,10 +467,15 @@ onMounted(() => {
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="46" />
-        <el-table-column prop="nameMasked" label="姓名" width="100" />
-        <el-table-column prop="genderName" label="性别" width="70" />
-        <el-table-column label="年龄" width="70">
-          <template #default="{ row }">{{ row.age === null ? '—' : row.age }}</template>
+        <el-table-column label="绿道号" width="150">
+          <template #default="{ row }">{{ row.lastCaseNo ?? '—' }}</template>
+        </el-table-column>
+        <el-table-column label="患者" min-width="150">
+          <template #default="{ row }">
+            <router-link v-if="row.lastCaseId" :to="`/cases/${row.lastCaseId}`">{{ row.nameMasked }}</router-link>
+            <span v-else>{{ row.nameMasked }}</span>
+            <span class="text-sub">（{{ row.genderName }}<span v-if="row.age !== null">/{{ row.age }}岁</span>）</span>
+          </template>
         </el-table-column>
         <el-table-column label="疾病" width="110">
           <template #default="{ row }">

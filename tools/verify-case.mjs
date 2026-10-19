@@ -47,6 +47,14 @@ if (login.code !== 0) {
 }
 const H = { Authorization: `Bearer ${login.data.accessToken}` }
 
+/**
+ * 记录导入前的最大患者 id。
+ * 病例导入会「为每行新建一位患者」，而病例删除不会连带删患者，
+ * 因此测试结束必须把本次新建的患者一起清掉，否则会在患者管理里留下孤儿记录。
+ */
+const beforePatients = await api('/patients?page=1&pageSize=1&sort=id:desc', { headers: H })
+const maxPatientIdBefore = beforePatients.data?.list?.[0]?.id ?? 0
+
 /* -------------------------------------------------------- 列表与筛选 */
 console.log('· 列表与三个筛选')
 const all = await api('/cases?page=1&pageSize=5', { headers: H })
@@ -147,6 +155,17 @@ check('护士无删除病例权限被拒绝', nurseDelete.code === 40300, nurseD
 
 const anon = await api('/cases?page=1&pageSize=1')
 check('未登录访问病例列表被拒绝', anon.code === 40100, anon.message)
+
+/* -------------------------------------------------- 清理本次新建的患者 */
+console.log('\n· 清理测试数据')
+const afterPatients = await api('/patients?page=1&pageSize=50&sort=id:desc', { headers: H })
+const newPatientIds = (afterPatients.data?.list ?? []).filter((p) => p.id > maxPatientIdBefore).map((p) => p.id)
+if (newPatientIds.length > 0) {
+  const cleaned = await api('/patients/batch-delete', { method: 'POST', headers: H, body: JSON.stringify({ ids: newPatientIds }) })
+  check('导入新建的患者已随测试清理', cleaned.code === 0, `清理 ${cleaned.data?.deleted ?? 0} 条`)
+} else {
+  check('导入新建的患者已随测试清理', true, '无需清理')
+}
 
 /* ------------------------------------------------------------ 汇总 */
 console.log(`\n结果：${passed}/${passed + failed} 项通过`)

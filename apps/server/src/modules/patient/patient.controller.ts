@@ -7,7 +7,7 @@ import { clientIp } from '../../common/validate'
 import { AuditService } from '../../core/audit.service'
 import { PatientService } from './patient.service'
 
-const CSV_HEADER = ['姓名', '性别', '年龄', '疾病', '推送方式', '手机号', '状态', '最近就诊时间', '备注']
+const CSV_HEADER = ['绿道号', '姓名', '性别', '年龄', '疾病', '推送方式', '手机号', '状态', '最近就诊时间', '备注']
 
 function csvCell(value: unknown): string {
   const text = value === null || value === undefined ? '' : String(value)
@@ -41,6 +41,7 @@ export class PatientController {
     for (const r of rows) {
       lines.push(
         [
+          r.lastCaseNo,
           r.nameMasked,
           r.genderName,
           r.age === null ? '' : `${r.age}`,

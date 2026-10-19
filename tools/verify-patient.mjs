@@ -112,7 +112,7 @@ check('响应类型为 CSV', (exportRes.headers.get('content-type') ?? '').inclu
 check('未被统一响应信封包裹', !csv.trimStart().startsWith('{'))
 check('带 UTF-8 BOM（Excel 直接可开）', hasBom, `前 3 字节 ${[...exportBytes.slice(0, 3)].map((b) => b.toString(16).padStart(2, '0')).join(' ')}`)
 const csvLines = csv.replace(/^\uFEFF/, '').split('\r\n')
-check('表头 9 列', csvLines[0] === '姓名,性别,年龄,疾病,推送方式,手机号,状态,最近就诊时间,备注', csvLines[0])
+check('表头 10 列（首列为绿道号）', csvLines[0] === '绿道号,姓名,性别,年龄,疾病,推送方式,手机号,状态,最近就诊时间,备注', csvLines[0])
 check(
   '导出行数 = 筛选总数 + 1 行表头',
   csvLines.length === byDisease.data.total + 1,

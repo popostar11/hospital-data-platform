@@ -63,7 +63,7 @@ const PATIENT_COUNT_FROM = /* sql */ `
   LEFT JOIN green_channel_case c ON c.id = l.cid
 `
 
-const CSV_HEADER = ['姓名', '性别', '年龄', '疾病', '推送方式', '手机号', '状态', '最近就诊时间', '备注']
+const CSV_HEADER = ['绿道号', '姓名', '性别', '年龄', '疾病', '推送方式', '手机号', '状态', '最近就诊时间', '备注']
 
 function csvCell(value: unknown): string {
   const text = value === null || value === undefined ? '' : String(value)
@@ -143,7 +143,7 @@ export const patientRoutes: Route[] = [
       const lines = [CSV_HEADER.join(',')]
       for (const r of list) {
         lines.push(
-          [r.nameMasked, r.genderName, r.age ?? '', r.diseaseName, r.sourceTypeName, r.phoneMasked, r.statusName, r.lastVisitAt, r.remark]
+          [r.lastCaseNo, r.nameMasked, r.genderName, r.age ?? '', r.diseaseName, r.sourceTypeName, r.phoneMasked, r.statusName, r.lastVisitAt, r.remark]
             .map(csvCell)
             .join(','),
         )
