@@ -297,9 +297,9 @@ function buildFilter(query: PatientListQuery): { clause: string; params: SqlValu
   const params: SqlValue[] = []
   const keyword = (query.keyword ?? '').trim()
   if (keyword) {
-    // 支持脱敏姓名、病案号检索；明文检索需通过专用接口
-    where.push('(p.name_masked LIKE ? OR p.mrn LIKE ?)')
-    params.push(`%${keyword}%`, `%${keyword}%`)
+    // 关键字三合一：姓名（脱敏值）/ 病案号 / 最近一条病例的绿道号
+    where.push('(p.name_masked LIKE ? OR p.mrn LIKE ? OR c.case_no LIKE ?)')
+    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`)
   }
   if (query.diseaseCode) {
     where.push('c.disease_code = ?')

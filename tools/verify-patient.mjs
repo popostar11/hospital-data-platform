@@ -101,6 +101,36 @@ check(
 const empty = await api('/patients?page=1&pageSize=5&diseaseCode=NOT_EXIST_CODE', { headers: H })
 check('不存在的疾病筛选返回空', empty.code === 0 && empty.data.total === 0)
 
+// 一个输入框同时搜「姓名」和「病案号」（患者管理页就是这个行为）
+const byNameKw = await api(`/patients?page=1&pageSize=5&keyword=${encodeURIComponent('王')}`, { headers: H })
+check(
+  '同一个关键字框能搜姓名',
+  byNameKw.code === 0 && byNameKw.data.list.length > 0 && byNameKw.data.list.every((r) => r.nameMasked.includes('王')),
+  `total=${byNameKw.data?.total}`,
+)
+
+const mrnSample = all.data.list.find((r) => r.mrn)?.mrn
+const byMrnKw = await api(`/patients?page=1&pageSize=5&keyword=${encodeURIComponent(mrnSample ?? 'MRN')}`, { headers: H })
+check(
+  '同一个关键字框能搜病案号',
+  byMrnKw.code === 0 && byMrnKw.data.list.length > 0 && byMrnKw.data.list.every((r) => (r.mrn ?? '') === mrnSample),
+  `${mrnSample} → total=${byMrnKw.data?.total}`,
+)
+
+const fuzzyMrn = await api(`/patients?page=1&pageSize=5&keyword=${encodeURIComponent((mrnSample ?? 'MRN').slice(0, 7))}`, {
+  headers: H,
+})
+check('病案号支持部分匹配', fuzzyMrn.code === 0 && fuzzyMrn.data.total >= 1, `前缀 ${(mrnSample ?? 'MRN').slice(0, 7)} → total=${fuzzyMrn.data?.total}`)
+
+// 同一个框还能搜「绿道号」（列表每行都带最近一条病例的编号）
+const caseNoSample = all.data.list.find((r) => r.lastCaseNo)?.lastCaseNo
+const byCaseNo = await api(`/patients?page=1&pageSize=5&keyword=${encodeURIComponent(caseNoSample ?? 'LD')}`, { headers: H })
+check(
+  '同一个关键字框能搜绿道号',
+  byCaseNo.code === 0 && byCaseNo.data.list.length > 0 && byCaseNo.data.list.every((r) => (r.lastCaseNo ?? '') === caseNoSample),
+  `${caseNoSample} → total=${byCaseNo.data?.total}`,
+)
+
 /* ---------------------------------------------------------------- 导出 */
 console.log('\n· 导出 CSV')
 const exportRes = await fetch(`${BASE}/patients/export?diseaseCode=CHEST_PAIN`, { headers: H })

@@ -76,8 +76,9 @@ function buildFilter(query: URLSearchParams): { clause: string; params: unknown[
   const params: unknown[] = []
   const keyword = (query.get('keyword') ?? '').trim()
   if (keyword) {
-    where.push('(p.name_masked LIKE ? OR p.mrn LIKE ?)')
-    params.push(`%${keyword}%`, `%${keyword}%`)
+    // 关键字三合一：姓名（脱敏值）/ 病案号 / 最近一条病例的绿道号
+    where.push('(p.name_masked LIKE ? OR p.mrn LIKE ? OR c.case_no LIKE ?)')
+    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`)
   }
   for (const [param, column] of [
     ['diseaseCode', 'c.disease_code'],

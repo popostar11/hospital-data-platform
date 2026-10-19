@@ -51,6 +51,7 @@ function buildQuery(pageNo = page.value) {
   return {
     page: pageNo,
     pageSize: pageSize.value,
+    // 一个框同时搜 姓名 / 病案号 / 绿道号
     keyword: filters.keyword.trim() || undefined,
     diseaseCode: filters.diseaseCode || undefined,
     statusCode: filters.statusCode || undefined,
@@ -424,9 +425,9 @@ onMounted(() => {
         <el-form-item>
           <el-input
             v-model="filters.keyword"
-            placeholder="姓名 / 病案号"
+            placeholder="姓名 / 病案号 / 绿道号"
             clearable
-            style="width: 190px"
+            style="width: 230px"
             @keyup.enter="handleSearch"
             @clear="handleSearch"
           />

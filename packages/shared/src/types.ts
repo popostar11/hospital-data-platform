@@ -204,8 +204,9 @@ export interface PatientListItem {
   lastVisitAt: string | null
 }
 
-/** 患者列表查询条件：除关键字外，支持按「最近一条病例」的疾病 / 状态 / 推送方式筛选 */
+/** 患者列表查询条件：关键字同时匹配姓名/病案号/绿道号；另可按疾病/状态/推送方式筛选 */
 export interface PatientListQuery extends PageQuery {
+  /** 模糊匹配 姓名（脱敏值）/ 病案号 / 最近一条病例的绿道号 */
   keyword?: string
   diseaseCode?: string
   statusCode?: string
