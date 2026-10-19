@@ -62,6 +62,11 @@ check(
 )
 check('列表行含备注字段（可为空）', 'remark' in first)
 check(
+  '列表行带科室（取自最近一条病例）',
+  'deptName' in first && all.data.list.some((r) => r.deptName),
+  all.data.list.map((r) => r.deptName ?? '—').join(','),
+)
+check(
   '默认按最近就诊倒序',
   all.data.list.every((r, i, arr) => i === 0 || String(arr[i - 1].lastVisitAt ?? '') >= String(r.lastVisitAt ?? '')),
   all.data.list.map((r) => r.lastVisitAt).join(' > '),

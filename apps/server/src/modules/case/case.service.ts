@@ -133,6 +133,8 @@ export class CaseService {
         diseaseCode: null,
         diseaseName: null,
         diseaseColor: null,
+        deptId: null,
+        deptName: null,
         sourceType: null,
         sourceTypeName: null,
         sourceColor: null,

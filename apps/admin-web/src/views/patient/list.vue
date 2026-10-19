@@ -483,6 +483,9 @@ onMounted(() => {
             <ColorTag :color="row.diseaseColor" :text="row.diseaseName" />
           </template>
         </el-table-column>
+        <el-table-column label="科室" width="120">
+          <template #default="{ row }">{{ row.deptName ?? '—' }}</template>
+        </el-table-column>
         <el-table-column label="推送方式" width="110">
           <template #default="{ row }">{{ row.sourceTypeName ?? '—' }}</template>
         </el-table-column>

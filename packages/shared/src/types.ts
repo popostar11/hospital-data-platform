@@ -194,6 +194,9 @@ export interface PatientListItem {
   diseaseCode: string | null
   diseaseName: string | null
   diseaseColor: string | null
+  /** 最近一条病例所属科室 */
+  deptId: number | null
+  deptName: string | null
   sourceType: string | null
   sourceTypeName: string | null
   sourceColor: string | null

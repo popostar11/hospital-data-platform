@@ -433,10 +433,10 @@ onMounted(() => {
             <ColorTag :color="row.diseaseColor" :text="row.diseaseName" />
           </template>
         </el-table-column>
-        <el-table-column prop="sourceTypeName" label="推送方式" width="110" />
         <el-table-column prop="deptName" label="科室" width="130">
           <template #default="{ row }">{{ row.deptName ?? '—' }}</template>
         </el-table-column>
+        <el-table-column prop="sourceTypeName" label="推送方式" width="110" />
         <el-table-column label="状态" width="110">
           <template #default="{ row }">
             <ColorTag :color="row.statusColor" :text="row.statusName" />

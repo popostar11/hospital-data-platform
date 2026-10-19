@@ -44,6 +44,8 @@ interface PatientRow {
   caseId?: number | null
   caseNo?: string | null
   diseaseCode?: string | null
+  deptId?: number | null
+  deptName?: string | null
   sourceType?: string | null
   statusCode?: string | null
   caseCreatedAt?: string | null
@@ -59,6 +61,7 @@ const LATEST_CASE_JOIN = /* sql */ `
      GROUP BY patient_id
   ) l ON l.patient_id = p.id
   LEFT JOIN green_channel_case c ON c.id = l.cid
+  LEFT JOIN department d ON d.id = c.dept_id
 `
 
 const SELECT_PATIENT = /* sql */ `
@@ -67,6 +70,7 @@ const SELECT_PATIENT = /* sql */ `
          p.created_at AS createdAt,
          (SELECT COUNT(*) FROM green_channel_case x WHERE x.patient_id = p.id AND x.deleted_at IS NULL) AS visitCount,
          c.id AS caseId, c.case_no AS caseNo, c.disease_code AS diseaseCode,
+         c.dept_id AS deptId, d.name AS deptName,
          c.source_type AS sourceType, c.status_code AS statusCode, c.created_at AS caseCreatedAt
 `
 
@@ -352,6 +356,8 @@ function toListItem(
     diseaseCode: row.diseaseCode ?? null,
     diseaseName: disease?.name ?? row.diseaseCode ?? null,
     diseaseColor: disease?.color ?? null,
+    deptId: row.deptId ?? null,
+    deptName: row.deptName ?? null,
     sourceType: row.sourceType ?? null,
     sourceTypeName: source?.name ?? row.sourceType ?? null,
     sourceColor: source?.color ?? null,
