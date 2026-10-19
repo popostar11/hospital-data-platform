@@ -278,6 +278,8 @@ export interface CaseListItem {
   patientName: string
   genderName: string
   age: number | null
+  /** 患者手机号（脱敏） */
+  phoneMasked: string | null
   diseaseCode: DiseaseCode
   diseaseName: string
   diseaseColor: string

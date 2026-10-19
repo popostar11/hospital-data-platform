@@ -109,6 +109,7 @@ export async function toCaseListItem(dicts: Dicts, row: CaseRow): Promise<CaseLi
     patientName: row.patientName,
     genderName: genderLabel(row.gender),
     age: calcAge(row.birthDate),
+    phoneMasked: row.phoneMasked,
     diseaseCode: row.diseaseCode as CaseListItem['diseaseCode'],
     diseaseName: disease?.name ?? row.diseaseCode,
     diseaseColor: disease?.color ?? '#4FA8FF',

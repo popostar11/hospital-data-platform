@@ -61,6 +61,16 @@ const all = await api('/cases?page=1&pageSize=5', { headers: H })
 check('病例列表可读', all.code === 0 && all.data.list.length > 0, `total=${all.data?.total}`)
 const first = all.data.list[0]
 check('列表行含疾病/推送/状态/备注字段', !!first?.diseaseName && !!first?.sourceTypeName && !!first?.statusName && 'remark' in first)
+check(
+  '列表行带脱敏手机号',
+  'phoneMasked' in first && all.data.list.some((r) => r.phoneMasked),
+  all.data.list.map((r) => r.phoneMasked ?? '—').join(','),
+)
+check(
+  '手机号一律为脱敏格式（含 *）',
+  all.data.list.every((r) => !r.phoneMasked || r.phoneMasked.includes('*')),
+  '未出现明文号码',
+)
 
 const byDisease = await api('/cases?page=1&pageSize=5&diseaseCode=CHEST_PAIN', { headers: H })
 check(

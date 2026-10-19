@@ -421,8 +421,8 @@ onMounted(() => {
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="46" />
-        <el-table-column prop="caseNo" label="绿道号" width="150" />
-        <el-table-column label="患者" min-width="150">
+        <el-table-column prop="caseNo" label="绿道号" width="125" />
+        <el-table-column label="患者" min-width="118">
           <template #default="{ row }">
             <router-link :to="`/cases/${row.id}`">{{ row.patientName }}</router-link>
             <span class="text-sub">（{{ row.genderName }}<span v-if="row.age !== null">/{{ row.age }}岁</span>）</span>
@@ -433,33 +433,36 @@ onMounted(() => {
             <ColorTag :color="row.diseaseColor" :text="row.diseaseName" />
           </template>
         </el-table-column>
-        <el-table-column prop="deptName" label="科室" width="130">
+        <el-table-column prop="deptName" label="科室" width="100">
           <template #default="{ row }">{{ row.deptName ?? '—' }}</template>
         </el-table-column>
-        <el-table-column prop="sourceTypeName" label="推送方式" width="110" />
-        <el-table-column label="状态" width="110">
+        <el-table-column prop="sourceTypeName" label="推送方式" width="92" />
+        <el-table-column label="手机号" width="112">
+          <template #default="{ row }">{{ row.phoneMasked ?? '—' }}</template>
+        </el-table-column>
+        <el-table-column label="状态" width="92">
           <template #default="{ row }">
             <ColorTag :color="row.statusColor" :text="row.statusName" />
           </template>
         </el-table-column>
-        <el-table-column label="闭环" width="90">
+        <el-table-column label="闭环" width="78">
           <template #default="{ row }">
             <el-tag v-if="row.isClosed" type="success" size="small">已闭环</el-tag>
             <el-tag v-else type="warning" size="small">进行中</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="距离" width="90">
+        <el-table-column label="距离" width="74">
           <template #default="{ row }">
             {{ row.distanceKm === null ? '—' : `${row.distanceKm} km` }}
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="时间" width="160" sortable="custom">
+        <el-table-column prop="createdAt" label="时间" width="142" sortable="custom">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注" min-width="120" show-overflow-tooltip>
+        <el-table-column prop="remark" label="备注" min-width="85" show-overflow-tooltip>
           <template #default="{ row }">{{ row.remark ?? '—' }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="170" fixed="right">
+        <el-table-column label="操作" width="148" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="$router.push(`/cases/${row.id}`)">详情</el-button>
             <el-button

@@ -493,6 +493,7 @@ export class CaseService {
       patientName: row.patientName,
       genderName: genderLabel(row.gender),
       age: calcAge(row.birthDate),
+      phoneMasked: row.phoneMasked,
       diseaseCode: row.diseaseCode as never,
       diseaseName: disease?.name ?? row.diseaseCode,
       diseaseColor: disease?.color ?? '#4FA8FF',
