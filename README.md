@@ -159,6 +159,7 @@ yiyuanshujuguanlixitong/
 | `pnpm verify:screen` | 大屏验收：渲染、脱敏、无缝滚动、截图（走 Chrome DevTools 协议） |
 | `pnpm verify:admin` | 后台验收：真实登录 + 10 个页面巡检 + 越权守卫 |
 | `pnpm verify:patient` | 患者管理增强验收（25 项）：三个筛选、导出 CSV、批量导入、批量删除、权限 |
+| `pnpm verify:case` | 病例列表增强验收（22 项）：三个筛选、导出 Excel、批量导入、批量删除、越权拦截 |
 | `pnpm verify:worker` | Cloudflare 版契约验收（33 项，需先启动 worker） |
 | `pnpm worker:dev` / `worker:deploy` | 本地启动 / 部署 Cloudflare Worker |
 | `pnpm worker:seed` / `worker:assets` | 生成 D1 导入 SQL / 汇总前端产物 |

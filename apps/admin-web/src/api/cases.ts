@@ -3,6 +3,8 @@ import type {
   CaseCloseRequest,
   CaseDetail,
   CaseEventSaveRequest,
+  CaseImportResult,
+  CaseImportRow,
   CaseListItem,
   CaseQuery,
   CaseSaveRequest,
@@ -68,4 +70,14 @@ export function exportCases(query: CaseQuery): Promise<AxiosResponse<Blob>> {
   delete params.pageSize
   delete params.sort
   return download('/cases/export', params)
+}
+
+/** 批量导入病例（每行新建患者 + 一条病例；疾病/推送方式可填中文名） */
+export function importCases(rows: CaseImportRow[]): Promise<CaseImportResult> {
+  return post<CaseImportResult>('/cases/import', { rows })
+}
+
+/** 批量删除病例（软删除） */
+export function batchDeleteCases(ids: number[]): Promise<{ deleted: number }> {
+  return post<{ deleted: number }>('/cases/batch-delete', { ids })
 }

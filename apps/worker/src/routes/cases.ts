@@ -5,7 +5,7 @@
  *   - 附件上传依赖磁盘/R2，公网演示未启用（返回明确提示而非静默失败）
  *   - 导出由 xlsx 改为 CSV（exceljs 依赖 Node 流，Workers 里跑不动）
  */
-import { ERROR_CODE, PERM, SOURCE_TYPE, CASE_STATUS, diffMinutes, formatDate, genderLabel, calcAge, type CaseDetail, type CaseEventItem, type CaseListItem } from '@hospital/shared'
+import { ERROR_CODE, PERM, SOURCE_TYPE, CASE_STATUS, diffMinutes, formatDate, genderLabel, calcAge, type CaseDetail, type CaseEventItem, type CaseImportResult, type CaseImportRow, type CaseListItem } from '@hospital/shared'
 import { now } from '../db'
 import { ApiException, optionalDateTime, optionalNumber, optionalString, orderBy, paging, requireString } from '../http'
 import { Dicts, SELECT_CASE, SELECT_PATIENT, maskNameOnly, nextCaseNo, toCaseListItem, toPatientListItem, type CaseRow } from '../services'
@@ -186,6 +186,120 @@ export const caseRoutes: Route[] = [
       const dicts = new Dicts(ctx.db)
       const list: CaseListItem[] = await Promise.all(rows.map((r) => toCaseListItem(dicts, r)))
       return { list, total, page, pageSize }
+    },
+  },
+  {
+    method: 'POST',
+    path: '/cases/import',
+    perms: [PERM.CASE_CREATE],
+    handler: async (ctx) => {
+      const rows = (ctx.body.rows ?? []) as CaseImportRow[]
+      if (!Array.isArray(rows) || rows.length === 0) throw ApiException.param('导入内容为空')
+      if (rows.length > 1000) throw ApiException.param('单次最多导入 1000 行')
+      const dicts = new Dicts(ctx.db)
+      const [diseaseMap, sourceMap] = await Promise.all([dicts.mapOf('disease'), dicts.mapOf('sourceType')])
+      /** 既接受编码也接受中文名 */
+      const toCode = (map: Map<string, { name: string }>, value: unknown): string | null => {
+        const text = String(value ?? '').trim()
+        if (!text) return null
+        if (map.has(text)) return text
+        for (const [code, item] of map) if (item.name === text) return code
+        return null
+      }
+      const result: CaseImportResult = { total: rows.length, created: 0, skipped: 0, errors: [] }
+      for (let i = 0; i < rows.length; i++) {
+        const line = i + 2
+        const row = rows[i]!
+        try {
+          const name = requireString(row.patientName, '姓名', 32)
+          const diseaseCode = toCode(diseaseMap, row.disease)
+          if (!diseaseCode) throw ApiException.param(`疾病「${row.disease ?? ''}」不在字典中`)
+          const sourceType = toCode(sourceMap, row.sourceType)
+          if (!sourceType) throw ApiException.param(`推送方式「${row.sourceType ?? ''}」不在字典中`)
+          const createdAt = row.createdAt ? String(row.createdAt) : ctx.nowStr
+          const patientId = await ctx.db.insert('patient', {
+            mrn: null,
+            name_cipher: '',
+            name_masked: maskNameOnly(name),
+            gender: 9,
+            birth_date: row.birthDate ? String(row.birthDate).slice(0, 10) : null,
+            id_card_cipher: null,
+            id_card_masked: null,
+            phone_cipher: null,
+            phone_masked: null,
+            remark: null,
+            created_at: ctx.nowStr,
+            updated_at: ctx.nowStr,
+            deleted_at: null,
+          })
+          const id = await ctx.db.insert('green_channel_case', {
+            case_no: await nextCaseNo(ctx.db, createdAt),
+            patient_id: patientId,
+            dept_id: null,
+            disease_code: diseaseCode,
+            source_type: sourceType,
+            status_code: 'CREATED',
+            distance_km: null,
+            onset_at: null,
+            arrive_at: null,
+            created_at: createdAt,
+            updated_at: createdAt,
+            closed_at: null,
+            is_closed: 0,
+            creator_id: ctx.user?.id ?? null,
+            remark: row.remark ?? null,
+            deleted_at: null,
+          })
+          await ctx.db.run(
+            `INSERT OR IGNORE INTO case_event (case_id, event_code, event_at, operator_id, remark, created_at)
+             VALUES (?, 'CALL', ?, ?, NULL, ?)`,
+            [id, createdAt, ctx.user?.id ?? null, ctx.nowStr],
+          )
+          result.created++
+        } catch (err) {
+          result.skipped++
+          if (result.errors.length < 20) {
+            result.errors.push({ row: line, message: err instanceof Error ? err.message : String(err) })
+          }
+        }
+      }
+      await ctx.db.insert('sys_oper_log', {
+        user_id: ctx.user?.id ?? null,
+        user_name: ctx.user?.username ?? null,
+        module: 'case',
+        action: 'IMPORT',
+        target_type: 'green_channel_case',
+        detail: JSON.stringify({ total: result.total, created: result.created, skipped: result.skipped }),
+        created_at: ctx.nowStr,
+      })
+      return result
+    },
+  },
+  {
+    method: 'POST',
+    path: '/cases/batch-delete',
+    perms: [PERM.CASE_DELETE],
+    handler: async (ctx) => {
+      const ids = ((ctx.body.ids ?? []) as unknown[]).map((i) => Number(i)).filter((i) => Number.isFinite(i) && i > 0)
+      if (ids.length === 0) throw ApiException.param('请选择要删除的病例')
+      if (ids.length > 500) throw ApiException.param('单次最多删除 500 条')
+      let deleted = 0
+      for (const id of ids) {
+        const hit = await ctx.db.get('SELECT id FROM green_channel_case WHERE id = ? AND deleted_at IS NULL', [id])
+        if (!hit) continue
+        await ctx.db.update('green_channel_case', id, { deleted_at: ctx.nowStr, updated_at: ctx.nowStr })
+        deleted++
+      }
+      await ctx.db.insert('sys_oper_log', {
+        user_id: ctx.user?.id ?? null,
+        user_name: ctx.user?.username ?? null,
+        module: 'case',
+        action: 'BATCH_DELETE',
+        target_type: 'green_channel_case',
+        detail: JSON.stringify({ requested: ids.length, deleted }),
+        created_at: ctx.nowStr,
+      })
+      return { deleted }
     },
   },
   {

@@ -322,6 +322,24 @@ export interface CaseSaveRequest {
   remark?: string | null
 }
 
+/** 病例批量导入的一行：疾病与推送方式支持「中文名」或「编码」 */
+export interface CaseImportRow {
+  patientName: string
+  gender?: GenderCode | string
+  birthDate?: string | null
+  disease: string
+  sourceType: string
+  createdAt?: string | null
+  remark?: string | null
+}
+
+export interface CaseImportResult {
+  total: number
+  created: number
+  skipped: number
+  errors: { row: number; message: string }[]
+}
+
 export interface CaseEventSaveRequest {
   eventCode: EventCode
   eventAt: string

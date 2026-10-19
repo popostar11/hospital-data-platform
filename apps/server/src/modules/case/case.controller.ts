@@ -19,7 +19,7 @@ import { extname, join } from 'node:path'
 import { randomBytes } from 'node:crypto'
 import * as ExcelJS from 'exceljs'
 import type { Response } from 'express'
-import { PERM, formatDate, type CaseEventSaveRequest, type CaseQuery, type CaseSaveRequest } from '@hospital/shared'
+import { PERM, formatDate, type CaseEventSaveRequest, type CaseImportRow, type CaseQuery, type CaseSaveRequest } from '@hospital/shared'
 import { RequirePerms } from '../../common/auth'
 import { clientIp, optionalDateTime, optionalString } from '../../common/validate'
 import type { RequestWithUser } from '../../common/api'
@@ -105,6 +105,34 @@ export class CaseController {
   download(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const file = this.cases.getAttachment(id)
     res.download(join(config.uploadDir, file.storedName), file.fileName)
+  }
+
+  /** 批量导入病例（每行新建患者 + 一条病例；疾病/推送方式可填中文名） */
+  @Post('import')
+  @RequirePerms(PERM.CASE_CREATE)
+  async import(@Body() body: { rows?: CaseImportRow[] }, @Req() req: RequestWithUser) {
+    const result = this.cases.importRows(body?.rows ?? [], req.user?.id ?? null)
+    await this.audit.log({
+      userId: req.user?.id, userName: req.user?.username, module: 'case', action: 'IMPORT',
+      targetType: 'green_channel_case',
+      detail: { total: result.total, created: result.created, skipped: result.skipped },
+      ip: clientIp(req.headers, req.socket), ua: req.headers['user-agent'] as string,
+    })
+    return result
+  }
+
+  /** 批量删除病例（软删除） */
+  @Post('batch-delete')
+  @RequirePerms(PERM.CASE_DELETE)
+  async batchDelete(@Body() body: { ids?: number[] }, @Req() req: RequestWithUser) {
+    const ids = (body?.ids ?? []).map(Number)
+    const deleted = this.cases.removeMany(ids)
+    await this.audit.log({
+      userId: req.user?.id, userName: req.user?.username, module: 'case', action: 'BATCH_DELETE',
+      targetType: 'green_channel_case', detail: { requested: ids.length, deleted },
+      ip: clientIp(req.headers, req.socket), ua: req.headers['user-agent'] as string,
+    })
+    return { deleted }
   }
 
   @Get()

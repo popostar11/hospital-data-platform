@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   EVENT_SEEDS,
+  GENDER,
   diffMinutes,
   formatDate,
   genderLabel,
@@ -8,11 +9,14 @@ import {
   type CaseDetail,
   type CaseEventItem,
   type CaseEventSaveRequest,
+  type CaseImportResult,
+  type CaseImportRow,
   type CaseListItem,
   type CaseQuery,
   type CaseSaveRequest,
   type DictItem,
   type EventCode,
+  type GenderCode,
   type Paginated,
   type SourceType,
 } from '@hospital/shared'
@@ -278,6 +282,77 @@ export class CaseService {
     this.db.update('green_channel_case', id, { deleted_at: now(), updated_at: now() })
   }
 
+  /** 批量删除（软删除；时间节点保留，靠 case.deleted_at 过滤） */
+  removeMany(ids: number[]): number {
+    if (!Array.isArray(ids) || ids.length === 0) throw ApiException.param('请选择要删除的病例')
+    if (ids.length > 500) throw ApiException.param('单次最多删除 500 条')
+    const ts = now()
+    let deleted = 0
+    for (const raw of ids) {
+      const id = Number(raw)
+      if (!Number.isFinite(id) || id <= 0) continue
+      const hit = this.db.get<{ id: number }>('SELECT id FROM green_channel_case WHERE id = ? AND deleted_at IS NULL', [id])
+      if (!hit) continue
+      this.db.update('green_channel_case', id, { deleted_at: ts, updated_at: ts })
+      deleted++
+    }
+    return deleted
+  }
+
+  /** 字典「编码 → 编码」与「名称 → 编码」，供导入时同时接受中文名和编码 */
+  private dictCodeMap(type: string): Map<string, string> {
+    const rows = this.db.all<{ code: string; name: string }>('SELECT code, name FROM dict_item WHERE type = ?', [type])
+    const map = new Map<string, string>()
+    for (const r of rows) {
+      map.set(r.code, r.code)
+      map.set(r.name, r.code)
+    }
+    return map
+  }
+
+  /**
+   * 批量导入病例。每行「新建患者 + 一条病例」，单行失败不影响其他行：
+   * 疾病 / 推送方式 既接受中文名也接受编码，不在字典中则报错并给出行号。
+   */
+  importRows(rows: CaseImportRow[], operatorId: number | null): CaseImportResult {
+    if (!Array.isArray(rows) || rows.length === 0) throw ApiException.param('导入内容为空')
+    if (rows.length > 1000) throw ApiException.param('单次最多导入 1000 行')
+    const diseaseMap = this.dictCodeMap('disease')
+    const sourceMap = this.dictCodeMap('sourceType')
+    const result: CaseImportResult = { total: rows.length, created: 0, skipped: 0, errors: [] }
+    rows.forEach((row, index) => {
+      const lineNo = index + 2
+      try {
+        const name = requiredString(row.patientName, '姓名', 32)
+        const disease = diseaseMap.get(String(row.disease ?? '').trim())
+        if (!disease) throw ApiException.param(`疾病「${row.disease ?? ''}」不在字典中`)
+        const source = sourceMap.get(String(row.sourceType ?? '').trim())
+        if (!source) throw ApiException.param(`推送方式「${row.sourceType ?? ''}」不在字典中`)
+        this.create(
+          {
+            diseaseCode: disease as CaseSaveRequest['diseaseCode'],
+            sourceType: source as CaseSaveRequest['sourceType'],
+            createdAt: row.createdAt ?? null,
+            remark: row.remark ?? null,
+            patient: {
+              name,
+              gender: parseGenderCode(row.gender),
+              birthDate: row.birthDate ?? null,
+            },
+          },
+          operatorId,
+        )
+        result.created++
+      } catch (err) {
+        result.skipped++
+        if (result.errors.length < 20) {
+          result.errors.push({ row: lineNo, message: err instanceof Error ? err.message : String(err) })
+        }
+      }
+    })
+    return result
+  }
+
   /** 补录/修改时间节点（同一节点重复提交即覆盖） */
   addEvent(caseId: number, body: CaseEventSaveRequest, operatorId: number | null): CaseEventItem[] {
     const exists = this.db.get<{ id: number }>('SELECT id FROM green_channel_case WHERE id = ? AND deleted_at IS NULL', [caseId])
@@ -455,4 +530,12 @@ function computeResponseMinutes(events: CaseEventItem[]): number | null {
   const end = sorted.find((e) => e.eventCode === 'ARRIVE_HOSPITAL') ?? sorted.find((e) => e.eventCode === 'TRIAGE') ?? sorted.find((e) => e.eventCode === 'FIRST_CONTACT')
   if (!end) return null
   return diffMinutes(first.eventAt, end.eventAt)
+}
+
+/** CSV 里的性别文本 → 性别码（导入用） */
+function parseGenderCode(value: unknown): GenderCode {
+  const text = String(value ?? '').trim()
+  if (text === '男' || text === '1' || text.toLowerCase() === 'male') return GENDER.MALE
+  if (text === '女' || text === '2' || text.toLowerCase() === 'female') return GENDER.FEMALE
+  return GENDER.UNKNOWN
 }
