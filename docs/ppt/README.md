@@ -1,13 +1,13 @@
 # 项目介绍 PPT
 
-> 用大白话介绍 **医院数据管理平台 · 急救绿道** 是什么、怎么做的、怎么用。
+> 用大白话介绍 **急诊专科中心数据平台 · 急救绿道** 是什么、怎么做的、怎么用。
 
 ## 交付物
 
 | 文件 | 页数 | 说明 |
 |---|---|---|
-| **`医院数据管理平台-项目汇报.pptx`** | 15 页 | **给领导的汇报稿**：结论先行，要点为 形态 · 技术栈 · 交付内容 · 方案选择 · 开箱即跑 |
-| **`医院数据管理平台-项目介绍.pptx`** | 13 页 | 面向同事/技术同行的介绍稿，含大屏与后台的图例讲解 |
+| **`急诊专科中心数据平台-项目汇报.pptx`** | 15 页 | **给领导的汇报稿**：结论先行，要点为 形态 · 技术栈 · 交付内容 · 方案选择 · 开箱即跑 |
+| **`急诊专科中心数据平台-项目介绍.pptx`** | 13 页 | 面向同事/技术同行的介绍稿，含大屏与后台的图例讲解 |
 | `index.html` | 13 页 | 附带的网页版（浏览器里按方向键放映），不是交付主体 |
 
 两份 pptx 都是 16:9，文字/表格/图片均为 PowerPoint 原生对象，可直接编辑。用 PowerPoint / WPS / Keynote 打开均可。
@@ -96,8 +96,8 @@ python tools/build-ppt.py            # 介绍稿（13 页）
 相对布局与正式文件完全一致：
 
 ```bash
-python tools/make-preview-pptx.py docs/ppt/医院数据管理平台-项目汇报.pptx
-node <libreoffice-kit cli> render --input docs/ppt/医院数据管理平台-项目汇报-preview.pptx --output-dir render --pages 1,2,3
+python tools/make-preview-pptx.py docs/ppt/急诊专科中心数据平台-项目汇报.pptx
+node <libreoffice-kit cli> render --input docs/ppt/急诊专科中心数据平台-项目汇报-preview.pptx --output-dir render --pages 1,2,3
 ```
 
 另外 `tools/inspect-pptx.py` 可以 dump 任意 pptx 的结构与配色规范（用来对齐别人的汇报格式）。

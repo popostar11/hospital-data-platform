@@ -23,7 +23,7 @@ const say = (m = '') => console.log(m)
 
 say()
 say(SEP)
-say('  医院数据管理平台  ·  停止服务')
+say('  急诊专科中心数据平台  ·  停止服务')
 say(SEP)
 say()
 

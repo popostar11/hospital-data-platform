@@ -105,7 +105,7 @@ function handleCommand(command: string | number | object): void {
     <el-aside class="layout-aside" :width="collapsed ? '64px' : '212px'">
       <div class="brand">
         <span class="brand-mark">急</span>
-        <span v-show="!collapsed" class="brand-text">急救绿道管理平台</span>
+        <span v-show="!collapsed" class="brand-text">急诊专科中心数据平台</span>
       </div>
       <el-menu
         class="layout-menu"
@@ -233,9 +233,10 @@ function handleCommand(command: string | number | object): void {
 
 .brand-text {
   margin-left: 10px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 1px;
+  /* 9 个中文字在 212px 侧边栏里要留余量：15px + 1px 字距会贴边被切 */
+  letter-spacing: 0.5px;
 }
 
 .layout-menu {

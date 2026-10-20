@@ -20,8 +20,8 @@ if (!token) {
 }
 
 const DESCRIPTION =
-  '医院数据管理平台（急救绿道）：大屏可视化 + 后台管理 + Cloudflare Workers/D1 公网版。' +
-  '双击即用、零配置启动，含 71 项自动化验收。全部为合成的演示数据。'
+  '急诊专科中心数据平台（急救绿道）：大屏可视化 + 后台管理 + Cloudflare Workers/D1 公网版。' +
+  '双击即用、零配置启动，含 149 项自动化验收。全部为合成的演示数据。'
 
 const HOMEPAGE = 'https://popostar11.github.io/hospital-data-platform/'
 

@@ -105,7 +105,7 @@ function landingPage(): Response {
   const html = `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>医院数据管理平台 · 急救绿道</title>
+<title>急诊专科中心数据平台 · 急救绿道</title>
 <style>
   :root{color-scheme:dark}
   *{box-sizing:border-box}
@@ -125,7 +125,7 @@ function landingPage(): Response {
   footer{margin-top:38px;font-size:12px;color:#5d7ba3;text-align:center;line-height:1.8}
 </style></head>
 <body>
-  <h1>医院数据管理平台</h1>
+  <h1>急诊专科中心数据平台</h1>
   <div class="sub">${DEFAULT_HOSPITAL_NAME} · 急救绿道（演示数据）</div>
   <div class="cards">
     <a class="card" href="/screen/"><h2>急救绿道大屏</h2><p>只读可视化终端，建议 1920×1080 全屏浏览</p><span class="go">进入 →</span></a>

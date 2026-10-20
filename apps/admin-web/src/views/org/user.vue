@@ -27,6 +27,53 @@ const pageSize = ref(20)
 const departments = ref<DepartmentNode[]>([])
 const roles = ref<RoleItem[]>([])
 
+/**
+ * 角色权限矩阵的行定义：权限点 → 中文名。
+ * 顺序即矩阵行序；每一行都对应一个后端真实强制的权限点，
+ * 矩阵由 /roles 返回的 perms 实时渲染，不在页面里另写一份权限表。
+ */
+const PERM_ROWS: { code: string; label: string }[] = [
+  { code: PERM.CASE_VIEW, label: '查看病例' },
+  { code: PERM.CASE_CREATE, label: '病例录入' },
+  { code: PERM.CASE_UPDATE, label: '编辑病例' },
+  { code: PERM.CASE_EVENT, label: '补录时间节点' },
+  { code: PERM.CASE_DELETE, label: '删除病例' },
+  { code: PERM.CASE_EXPORT, label: '病例导出' },
+  { code: PERM.PATIENT_VIEW, label: '查看患者' },
+  { code: PERM.PATIENT_UPDATE, label: '新增 / 编辑 / 删除患者、批量导入' },
+  { code: PERM.PATIENT_PLAIN, label: '查看患者明文（记审计）' },
+  { code: PERM.DICT_VIEW, label: '查看字典' },
+  { code: PERM.DICT_UPDATE, label: '维护字典' },
+  { code: PERM.ORG_VIEW, label: '查看组织人员（只读）' },
+  { code: PERM.ORG_UPDATE, label: '管理科室与用户（读写）' },
+  { code: PERM.REPORT_VIEW, label: '查看报表与质控指标' },
+  { code: PERM.REPORT_EXPORT, label: '报表导出' },
+  { code: PERM.SCREEN_CONFIG_VIEW, label: '查看大屏配置' },
+  { code: PERM.SCREEN_CONFIG_UPDATE, label: '修改大屏配置' },
+  { code: PERM.AUDIT_VIEW, label: '查看审计日志' },
+  { code: PERM.INTEGRATION_VIEW, label: '查看接口集成' },
+]
+
+/** 角色标识色（浅底深字，保持与全站浅色背景一致） */
+const ROLE_COLORS: Record<string, string> = {
+  ADMIN: '#d9485f',
+  ER_MANAGER: '#c8791a',
+  ER_DOCTOR: '#2f6fb0',
+  ER_NURSE: '#1f8f6b',
+  QC: '#6d5bd0',
+  LEADER: '#a8841a',
+  SCREEN: '#6b7a90',
+}
+
+function roleColor(code: string): string {
+  return ROLE_COLORS[code] ?? '#6b7a90'
+}
+
+/** 管理员在库里以 '*' 表示全权 */
+function roleHas(role: RoleItem, code: string): boolean {
+  return role.perms.includes('*') || role.perms.includes(code)
+}
+
 const filters = reactive<{ keyword: string; deptId: number | null; enabled: boolean | null }>({
   keyword: '',
   deptId: null,
@@ -297,6 +344,45 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- 角色权限矩阵：行=权限点，列=角色，数据取自 /roles 的真实 perms -->
+    <div class="card-block matrix-block">
+      <div class="matrix-head">
+        <h3 class="matrix-title">角色权限矩阵</h3>
+        <span class="matrix-hint">按数据库中的角色权限点实时生成；✓ 表示该角色具备此权限，— 表示不具备</span>
+      </div>
+
+      <div class="matrix-scroll">
+        <table class="perm-matrix">
+          <thead>
+            <tr>
+              <th class="col-perm">权限 \ 角色</th>
+              <th v-for="role in roles" :key="role.code" class="col-role">
+                <span class="role-pill" :style="{ color: roleColor(role.code), borderColor: roleColor(role.code) }">
+                  {{ role.name }}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in PERM_ROWS" :key="row.code">
+              <td class="col-perm">{{ row.label }}</td>
+              <td v-for="role in roles" :key="role.code" class="col-mark">
+                <span v-if="roleHas(role, row.code)" class="mark-yes">✓</span>
+                <span v-else class="mark-no">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="matrix-legend">
+        <div v-for="role in roles" :key="role.code" class="legend-line">
+          <span class="legend-role" :style="{ color: roleColor(role.code) }">{{ role.name }}</span>
+          <span class="legend-desc">{{ role.remark }}</span>
+        </div>
+      </div>
+    </div>
+
     <el-dialog v-model="dialogVisible" :title="editingId === null ? '新增用户' : '编辑用户'" width="520px">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="登录账号" prop="username">
@@ -348,5 +434,109 @@ onMounted(() => {
 <style scoped>
 .role-tag {
   margin-right: 4px;
+}
+
+/* ---------------------------------------------------- 角色权限矩阵 */
+.matrix-block {
+  margin-top: 16px;
+}
+
+.matrix-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.matrix-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.matrix-hint {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.matrix-scroll {
+  overflow-x: auto;
+}
+
+.perm-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.perm-matrix th,
+.perm-matrix td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.perm-matrix thead th {
+  background: var(--el-fill-color-light);
+  border-top: 1px solid var(--el-border-color-lighter);
+  font-weight: 600;
+}
+
+.perm-matrix tbody tr:hover {
+  background: var(--el-fill-color-lighter);
+}
+
+.perm-matrix .col-perm {
+  text-align: left;
+  color: var(--el-text-color-regular);
+}
+
+.perm-matrix .col-role,
+.perm-matrix .col-mark {
+  text-align: center;
+  width: 104px;
+}
+
+.role-pill {
+  display: inline-block;
+  padding: 1px 10px;
+  border: 1px solid;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mark-yes {
+  color: #22a06b;
+  font-weight: 700;
+}
+
+.mark-no {
+  color: #c3cad6;
+}
+
+.matrix-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--el-border-color);
+  font-size: 12px;
+}
+
+.legend-line {
+  display: flex;
+  gap: 10px;
+}
+
+.legend-role {
+  flex: 0 0 96px;
+  font-weight: 600;
+}
+
+.legend-desc {
+  color: var(--el-text-color-secondary);
 }
 </style>

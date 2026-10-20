@@ -117,7 +117,7 @@ onMounted(() => {
       <!-- 左侧品牌区 -->
       <div class="login-brand">
         <div class="brand-logo">急</div>
-        <h1 class="brand-title">急救绿道管理平台</h1>
+        <h1 class="brand-title">急诊专科中心数据平台</h1>
         <p class="brand-hospital">{{ DEFAULT_HOSPITAL_NAME }}</p>
         <p class="brand-desc">胸痛 / 卒中 / 创伤 / 危重孕产妇 / 危重新生儿急救绿道全流程数据管理与质控</p>
         <ul class="brand-points">

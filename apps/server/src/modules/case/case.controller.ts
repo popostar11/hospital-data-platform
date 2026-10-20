@@ -48,7 +48,7 @@ export class CaseController {
   async export(@Query() query: Record<string, string>, @Req() req: RequestWithUser, @Res() res: Response) {
     const rows = this.cases.exportRows(parseCaseQuery(query))
     const workbook = new ExcelJS.Workbook()
-    workbook.creator = '急救绿道管理平台'
+    workbook.creator = '急诊专科中心数据平台'
     const sheet = workbook.addWorksheet('急救绿道病例')
     sheet.columns = [
       { header: '绿道编号', key: 'caseNo', width: 20 },

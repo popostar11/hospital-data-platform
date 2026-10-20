@@ -141,7 +141,7 @@ tree.push({ path: '.nojekyll', mode: '100644', type: 'blob', sha: nojekyll.json.
 const landing = `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>医院数据管理平台 · 静态演示</title>
+<title>急诊专科中心数据平台 · 静态演示</title>
 <style>
  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
    background:radial-gradient(1200px 600px at 50% 0%,#0b2a52,#041226 60%,#020a16);color:#dbeaff;
@@ -158,7 +158,7 @@ const landing = `<!doctype html>
  code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px}
 </style></head>
 <body>
-  <h1>医院数据管理平台</h1>
+  <h1>急诊专科中心数据平台</h1>
   <div class="sub">示例市第二人民医院 · 急救绿道 · 静态演示</div>
   <a class="card" href="./screen/">
     <h2>大屏可视化终端</h2>

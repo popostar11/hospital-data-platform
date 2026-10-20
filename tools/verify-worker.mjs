@@ -59,7 +59,7 @@ const health = await api('/health')
 check('Workers 运行时健康检查', health.code === 0 && health.data?.runtime === 'cloudflare-workers', health.data?.runtime)
 
 for (const [path, marker] of [
-  ['/', '医院数据管理平台'],
+  ['/', '急诊专科中心数据平台'],
   ['/admin/', '<div id="app">'],
   ['/screen/', '<div id="app">'],
 ]) {

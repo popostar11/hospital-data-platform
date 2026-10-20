@@ -54,7 +54,7 @@ async function bootstrap(): Promise<void> {
   const base = `http://127.0.0.1:${config.port}`
   /* eslint-disable no-console */
   console.log('')
-  console.log('  医院数据管理平台已启动')
+  console.log('  急诊专科中心数据平台已启动')
   console.log(`  ├─ 后端接口   ${base}/api/v1`)
   console.log(`  ├─ 管理后台   ${hasAdmin ? `${base}/admin/` : '（未构建，可运行 pnpm dev:admin）'}`)
   console.log(`  ├─ 大屏终端   ${hasScreen ? `${base}/screen/` : '（未构建，可运行 pnpm dev:screen）'}`)
@@ -74,7 +74,7 @@ function landingPage(hasScreen: boolean, hasAdmin: boolean): string {
   return `<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>医院数据管理平台</title>
+<title>急诊专科中心数据平台</title>
 <style>
   :root{color-scheme:dark}
   *{box-sizing:border-box}
@@ -95,7 +95,7 @@ function landingPage(hasScreen: boolean, hasAdmin: boolean): string {
   footer{margin-top:38px;font-size:12px;color:#5d7ba3}
 </style></head>
 <body>
-  <h1>医院数据管理平台</h1>
+  <h1>急诊专科中心数据平台</h1>
   <div class="sub">急救绿道数据平台 · ${DEFAULT_HOSPITAL_NAME}</div>
   <div class="cards">
     ${link('/screen/', '急救绿道大屏', '只读可视化终端，1920×1080 横屏常驻', hasScreen)}

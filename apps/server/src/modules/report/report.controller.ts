@@ -32,7 +32,7 @@ export class ReportController {
   async export(@Query() query: Record<string, string>, @Req() req: RequestWithUser, @Res() res: Response) {
     const result = this.report.greenChannel({ from: query.from, to: query.to, groupBy: query.groupBy })
     const workbook = new ExcelJS.Workbook()
-    workbook.creator = '急救绿道管理平台'
+    workbook.creator = '急诊专科中心数据平台'
     const sheet = workbook.addWorksheet('绿道统计')
     sheet.columns = [
       { header: '维度', key: 'label', width: 20 },

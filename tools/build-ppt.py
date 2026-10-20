@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-生成《医院数据管理平台 · 急救绿道》项目介绍 PPTX
+生成《急诊专科中心数据平台 · 急救绿道》项目介绍 PPTX
 
 用法：
     python tools/build-ppt.py
 
 产出：
-    docs/ppt/医院数据管理平台-项目介绍.pptx   （16:9，13 页，文字/表格/图片均可编辑）
+    docs/ppt/急诊专科中心数据平台-项目介绍.pptx   （16:9，13 页，文字/表格/图片均可编辑）
 
 设计约定：
     - 所有文字用微软雅黑，并同时设置 latin 与 ea 字体，避免中文回退成宋体
@@ -26,7 +26,7 @@ from pptx.util import Emu, Inches, Pt
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "docs" / "ppt" / "images"
-OUT = ROOT / "docs" / "ppt" / "医院数据管理平台-项目介绍.pptx"
+OUT = ROOT / "docs" / "ppt" / "急诊专科中心数据平台-项目介绍.pptx"
 
 # ----------------------------------------------------------------- 设计常量
 # 配色与大屏自身的样式令牌对齐（--c-bg / --c-cyan / --c-value 等），
@@ -255,7 +255,7 @@ bg.shadow.inherit = False
 
 tb(s, 1.0, 1.55, 11.3, 0.4, [{"runs": [{"t": "项目介绍 · 2026", "sz": 14, "b": True, "c": ACCENT}]}])
 tb(s, 1.0, 2.05, 11.3, 1.5,
-   [{"runs": [{"t": "医院数据管理平台", "sz": 44, "b": True, "c": WHITE}], "space_after": 4},
+   [{"runs": [{"t": "急诊专科中心数据平台", "sz": 44, "b": True, "c": WHITE}], "space_after": 4},
     {"runs": [{"t": "急救绿道", "sz": 44, "b": True, "c": ACCENT}]}])
 tb(s, 1.0, 3.85, 10.4, 0.8,
    [{"runs": [{"t": "一块大屏看全局，一个后台管细节。", "sz": 17, "c": SOFT_ON_DARK}], "space_after": 4},

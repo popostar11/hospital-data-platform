@@ -2,7 +2,7 @@
   "name": "@hospital/admin-web",
   "version": "0.1.0",
   "private": true,
-  "description": "医院数据管理平台 —— 后台管理系统",
+  "description": "急诊专科中心数据平台 —— 后台管理系统",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -130,7 +130,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  document.title = to.meta.title ? `${to.meta.title} · 急救绿道管理平台` : '急救绿道管理平台'
+  document.title = to.meta.title ? `${to.meta.title} · 急诊专科中心数据平台` : '急诊专科中心数据平台'
 
   if (to.meta.anonymous) return true
 

@@ -108,7 +108,7 @@ function finish(code) {
 say('')
 say(`启动时间：${stamp()}`)
 say(SEP)
-say('  医院数据管理平台  ·  急救绿道')
+say('  急诊专科中心数据平台  ·  急救绿道')
 say('  急救绿道数据平台（演示数据）')
 say(SEP)
 say('')

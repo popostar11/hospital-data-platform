@@ -2,7 +2,7 @@
   "name": "hospital-data-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "医院数据管理平台 —— 急救绿道大屏可视化 + 后台管理系统",
+  "description": "急诊专科中心数据平台 —— 急救绿道大屏可视化 + 后台管理系统",
   "scripts": {
     "build:shared": "pnpm --filter @hospital/shared build",
     "build:server": "pnpm --filter @hospital/server build",

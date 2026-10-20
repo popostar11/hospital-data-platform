@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-生成《医院数据管理平台 · 急救绿道》**领导汇报** PPTX
+生成《急诊专科中心数据平台 · 急救绿道》**领导汇报** PPTX
 
 用法：
     python tools/build-report-ppt.py            # 默认：深色（与大屏同色系）
     python tools/build-report-ppt.py --light    # 浅色（便于打印 / 明亮会议室）
 
 产出：
-    docs/ppt/医院数据管理平台-项目汇报.pptx   （16:9，15 页）
+    docs/ppt/急诊专科中心数据平台-项目汇报.pptx   （16:9，15 页）
 
 配色取自大屏自身的样式令牌，因此汇报稿与产品是同一套视觉：
     --c-bg-deep #02091a · --c-bg #04122b · 面板渐变 rgba(9,42,88,.62)
@@ -31,7 +31,7 @@ from pptx.util import Emu, Inches, Pt
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "docs" / "ppt" / "images"
-OUT = ROOT / "docs" / "ppt" / "医院数据管理平台-项目汇报.pptx"
+OUT = ROOT / "docs" / "ppt" / "急诊专科中心数据平台-项目汇报.pptx"
 
 DARK = "--light" not in sys.argv
 
@@ -92,7 +92,7 @@ CW = SW - 2 * M
 Y_KICKER, Y_TITLE, Y_LEDE = 0.40, 0.68, 1.22
 Y_FOOT = 7.04
 TOTAL = 15
-PROJECT = "医院数据管理平台 · 急救绿道"
+PROJECT = "急诊专科中心数据平台 · 急救绿道"
 
 prs = Presentation()
 prs.slide_width = Inches(SW)
@@ -261,7 +261,7 @@ s.shapes.add_picture(str(IMG / "admin.png"), Inches(8.66), Inches(3.42), width=I
 
 tb(s, M, 1.02, 7.3, 0.30, [{"runs": [{"t": "项目汇报 / PROJECT REPORT", "sz": 12.5, "b": True, "c": PRIMARY}]}])
 tb(s, M, 1.45, 7.6, 1.75,
-   [{"runs": [{"t": "医院数据管理平台", "sz": 40, "b": True, "c": WHITE}], "space_after": 2},
+   [{"runs": [{"t": "急诊专科中心数据平台", "sz": 40, "b": True, "c": WHITE}], "space_after": 2},
     {"runs": [{"t": "急救绿道", "sz": 40, "b": True, "c": CYAN}]}])
 tb(s, M, 3.42, 7.5, 0.70,
    [{"runs": [{"t": "一块大屏看全局，一个后台管细节。", "sz": 13.5, "c": SOFT_ON_DARK}], "space_after": 3},
