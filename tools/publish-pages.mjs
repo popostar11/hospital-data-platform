@@ -69,6 +69,20 @@ if (!existsSync(join(DIST, 'demo-screen.json'))) {
   process.exit(1)
 }
 
+/** 后台演示产物（VITE_DEMO=1 构建）；没有就只发大屏 */
+const ADMIN_DIST = join(ROOT, 'apps', 'admin-web', 'dist')
+const hasAdmin = existsSync(join(ADMIN_DIST, 'index.html')) && existsSync(join(ADMIN_DIST, 'demo-admin.json'))
+if (!hasAdmin) {
+  console.log('\n  [提示] 未发现后台演示产物，本次只发布大屏。如需发布后台：')
+  console.log('         node tools/export-admin-demo.mjs')
+  console.log('         VITE_DEMO=1 PAGES_BASE=/hospital-data-platform/admin/ pnpm --filter @hospital/admin-web build')
+}
+
+const sources = [
+  { prefix: 'screen', dir: DIST },
+  ...(hasAdmin ? [{ prefix: 'admin', dir: ADMIN_DIST }] : []),
+]
+
 /** 递归收集文件（相对路径统一用 / 分隔） */
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
@@ -79,9 +93,10 @@ function walk(dir, out = []) {
   return out
 }
 
-const files = walk(DIST)
+const groups = sources.map((s) => ({ ...s, files: walk(s.dir) }))
+const fileCount = groups.reduce((n, g) => n + g.files.length, 0)
 console.log(`\n【发布到 GitHub Pages】${REPO} 分支 ${BRANCH}`)
-console.log(`  构建产物：${files.length} 个文件`)
+console.log(`  构建产物：${fileCount} 个文件（${groups.map((g) => `${g.prefix}/ ${g.files.length}`).join('，')}）`)
 
 /* --------------------------------------------------- 2. 确保分支存在 */
 const repoInfo = await gh(`/repos/${REPO}`)
@@ -116,18 +131,20 @@ if (refRes.ok) {
 
 /* ------------------------------------- 3. 构建 tree 并提交（一次 API 调用一个文件） */
 const tree = []
-for (const file of files) {
-  const repoPath = posix.join('screen', relative(DIST, file).split(/[\\/]/).join('/'))
-  const content = readFileSync(file).toString('base64')
-  const blob = await gh(`/repos/${REPO}/git/blobs`, {
-    method: 'POST',
-    body: JSON.stringify({ content, encoding: 'base64' }),
-  })
-  if (!blob.ok) {
-    console.error(`  上传失败 ${repoPath}：HTTP ${blob.status}`)
-    process.exit(1)
+for (const group of groups) {
+  for (const file of group.files) {
+    const repoPath = posix.join(group.prefix, relative(group.dir, file).split(/[\\/]/).join('/'))
+    const content = readFileSync(file).toString('base64')
+    const blob = await gh(`/repos/${REPO}/git/blobs`, {
+      method: 'POST',
+      body: JSON.stringify({ content, encoding: 'base64' }),
+    })
+    if (!blob.ok) {
+      console.error(`  上传失败 ${repoPath}：HTTP ${blob.status}`)
+      process.exit(1)
+    }
+    tree.push({ path: repoPath, mode: '100644', type: 'blob', sha: blob.json.sha })
   }
-  tree.push({ path: repoPath, mode: '100644', type: 'blob', sha: blob.json.sha })
 }
 
 // .nojekyll：避免 GitHub Pages 用 Jekyll 处理以 _ 开头的资源
@@ -151,6 +168,7 @@ const landing = `<!doctype html>
  a.card{display:block;width:320px;max-width:90vw;margin:0 auto;padding:22px;border-radius:14px;text-decoration:none;
    color:#dbeaff;background:linear-gradient(160deg,rgba(20,64,116,.85),rgba(8,26,52,.9));
    border:1px solid rgba(60,170,255,.35);transition:.2s}
+ .cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
  a.card:hover{transform:translateY(-4px);border-color:rgba(24,224,255,.8)}
  .card h2{margin:0 0 8px;font-size:17px;color:#9fe6ff}
  .card p{margin:0;font-size:12px;line-height:1.7;color:#8fb0d6}
@@ -160,14 +178,25 @@ const landing = `<!doctype html>
 <body>
   <h1>急诊专科中心数据平台</h1>
   <div class="sub">示例市第二人民医院 · 急救绿道 · 静态演示</div>
-  <a class="card" href="./screen/">
-    <h2>大屏可视化终端</h2>
-    <p>1920×1080 横屏版面；本页使用导出的静态快照数据，无需后端</p>
-    <p style="margin-top:10px;color:#18e0ff">进入大屏 →</p>
-  </a>
+  <div class="cards">
+    <a class="card" href="./screen/">
+      <h2>大屏可视化终端</h2>
+      <p>1920×1080 横屏版面；本页使用导出的静态快照数据，无需后端</p>
+      <p style="margin-top:10px;color:#18e0ff">进入大屏 →</p>
+    </a>${
+      hasAdmin
+        ? `
+    <a class="card" href="./admin/">
+      <h2>后台管理系统</h2>
+      <p>可点击浏览工作台、病例、患者、字典、组织人员、报表与审计；数据为导出快照，只读</p>
+      <p style="margin-top:10px;color:#18e0ff">进入后台 →</p>
+    </a>`
+        : ''
+    }
+  </div>
   <footer>
-    本站为 GitHub Pages 纯静态演示，只有大屏部分（数据为导出的快照）。<br/>
-    完整的后台管理系统（登录、病例增删改、报表导出）需要后端，请在本地运行：
+    本站为 GitHub Pages 纯静态演示：数据是导出的快照，<b>写操作（新增/编辑/删除/导入/导出）不会生效</b>。<br/>
+    要完整体验（真的能改数据、能导出），请在本地运行：
     <code>启动.bat</code>，然后访问 <code>http://127.0.0.1:3000/admin/</code><br/>
     全部数据为合成的示例数据，不代表任何真实机构或真实统计结果。
   </footer>
@@ -190,7 +219,9 @@ if (!treeRes.ok) {
 const commitRes = await gh(`/repos/${REPO}/git/commits`, {
   method: 'POST',
   body: JSON.stringify({
-    message: `chore(pages): 发布静态大屏演示（${files.length} 个文件）\n\n由 tools/publish-pages.mjs 自动生成；数据为合成的示例快照。`,
+    message: `chore(pages): 发布静态演示（${fileCount} 个文件）\n\n${
+      hasAdmin ? '大屏 + 后台演示（后台为只读快照）' : '仅大屏'
+    }，由 tools/publish-pages.mjs 自动生成；数据为合成的示例快照。`,
     tree: treeRes.json.sha,
     parents: [parentSha],
   }),

@@ -115,8 +115,25 @@ http.interceptors.response.use(
   },
 )
 
+/**
+ * 静态演示模式（GitHub Pages 无后端时启用）：
+ * 构建时用 VITE_DEMO=1 打开，所有请求改由 src/api/demo.ts 用导出的快照回答。
+ * 用动态 import 引入，正常构建里这个分支是死代码，不会把 mock 打进产物。
+ */
+export const DEMO_MODE = import.meta.env.VITE_DEMO === '1'
+
 /** 统一请求：响应拦截器已把 { code, message, data } 解包为 data */
 export function request<T>(config: AxiosRequestConfig): Promise<T> {
+  if (DEMO_MODE) {
+    return import('./demo').then((demo) =>
+      demo.demoRequest(
+        config.method ?? 'GET',
+        String(config.url ?? ''),
+        config.params as Record<string, unknown> | undefined,
+        config.data,
+      ),
+    ) as Promise<T>
+  }
   return http.request(config) as unknown as Promise<T>
 }
 
@@ -138,5 +155,9 @@ export function del<T>(url: string, params?: object): Promise<T> {
 
 /** 文件导出：返回原始响应（含 headers），由调用方解析文件名并保存 */
 export function download(url: string, params?: object): Promise<AxiosResponse<Blob>> {
+  if (DEMO_MODE) {
+    // 演示模式没有后端生成文件，明确提示而不是给一个空文件
+    return import('./demo').then((demo) => demo.demoDownload()) as Promise<AxiosResponse<Blob>>
+  }
   return http.request<Blob, AxiosResponse<Blob>>({ url, method: 'GET', params, responseType: 'blob' })
 }

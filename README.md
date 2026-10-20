@@ -2,6 +2,13 @@
 
 **急救绿道数据平台**：版面与交互 1:1 还原参考大屏，数据为合成示例数据，不代表任何真实机构的统计值。包含两个前端与一套后端：
 
+> **在线演示（GitHub Pages，纯静态、无需安装）**
+> 首页 <https://popostar11.github.io/hospital-data-platform/>
+> 大屏 <https://popostar11.github.io/hospital-data-platform/screen/>
+> 后台 <https://popostar11.github.io/hospital-data-platform/admin/> —— 可直接点开各页面，数据为导出快照，**写操作不生效**
+>
+> 要真的能改数据、能导出，请在本地运行 `启动.bat` 后访问 `http://127.0.0.1:3000/admin/`。
+
 | 端 | 说明 | 地址 |
 |---|---|---|
 | 大屏可视化终端 | 只读、常驻横屏，对应参考大屏的界面 | `/screen/` |
@@ -166,6 +173,8 @@ yiyuanshujuguanlixitong/
 | `pnpm typecheck` | 全仓类型检查 |
 | `pnpm shot:screen` | 单独出一张 1920×1080 大屏截图到 `docs/refs/` |
 | `pnpm shot:admin` | 任意后台页面截图（注入登录态直达，用于目视核对；参数：`#/patients 输出路径 宽 高`） |
+| `pnpm demo:export` | 导出后台静态演示快照 → `apps/admin-web/public/demo-admin.json` |
+| `pnpm demo:publish` | 一键构建并发布「大屏 + 后台演示」到 GitHub Pages（需 `GITHUB_TOKEN`） |
 
 验收脚本只依赖 Node 内置能力（`fetch` / `WebSocket` / `child_process`），不需要 Playwright、Puppeteer 等额外依赖；本机装有 Chrome 或 Edge 即可运行。
 

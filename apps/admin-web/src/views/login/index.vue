@@ -7,6 +7,7 @@ import { Lock, User } from '@element-plus/icons-vue'
 import type { LoginRequest } from '@hospital/shared'
 import { DEFAULT_HOSPITAL_NAME } from '@hospital/shared'
 import * as authApi from '@/api/auth'
+import { DEMO_MODE } from '@/api/client'
 import { useUserStore } from '@/stores/user'
 
 interface DemoAccount {
@@ -129,6 +130,14 @@ onMounted(() => {
 
       <!-- 右侧表单区 -->
       <div class="login-form">
+        <el-alert
+          v-if="DEMO_MODE"
+          class="demo-alert"
+          type="warning"
+          :closable="false"
+          show-icon
+          title="静态演示：数据为导出的快照，任意账号密码均可登录；新增/编辑/删除等写操作不会生效"
+        />
         <h2 class="form-title">账号登录</h2>
         <el-form ref="formRef" :model="form" :rules="rules" size="large" @keyup.enter="handleSubmit">
           <el-form-item prop="username">
@@ -238,6 +247,10 @@ onMounted(() => {
 
 .login-form {
   padding: 36px 36px 28px;
+}
+
+.demo-alert {
+  margin-bottom: 16px;
 }
 
 .form-title {

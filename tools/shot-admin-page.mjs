@@ -28,6 +28,8 @@ const outPath = resolve(ROOT, process.argv[3] ?? 'docs/refs/admin-patients.png')
 const width = Number(process.argv[4] ?? 1600)
 const height = Number(process.argv[5] ?? 900)
 const BASE = process.env.ADMIN_BASE ?? 'http://127.0.0.1:3000'
+/** 取 token 用的接口根；部署在子路径下时与页面 base 不同（如 Pages 的 /<repo>/admin/） */
+const API_BASE = process.env.ADMIN_API_BASE ?? BASE
 const PORT = 9336
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -38,7 +40,7 @@ if (!chromeBin) {
 }
 
 /* ---------------------------------------------------- 1. 拿 token */
-const loginRes = await fetch(`${BASE}/api/v1/auth/login`, {
+const loginRes = await fetch(`${API_BASE}/api/v1/auth/login`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username: process.env.ADMIN_USER ?? 'admin', password: process.env.ADMIN_PASS ?? 'Hospital@123' }),
