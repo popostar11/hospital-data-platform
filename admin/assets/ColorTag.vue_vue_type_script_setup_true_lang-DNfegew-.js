@@ -1,0 +1,1 @@
+import{d as e,k as a,c as l,a1 as r,t as n}from"./index-neCfLpAy.js";const u=e({__name:"ColorTag",props:{color:{default:null},text:{default:null}},setup(t){const o=t;return(s,c)=>(a(),l("span",{class:"color-tag",style:r({backgroundColor:o.color||"#8FA9C9"})},n(o.text??"—"),5))}});export{u as _};

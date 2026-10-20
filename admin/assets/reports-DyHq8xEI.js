@@ -1,0 +1,1 @@
+import{L as e,a0 as t}from"./index-neCfLpAy.js";function a(r){return e("/reports/green-channel",r)}function p(r,n){return e("/reports/kpi",{from:r,to:n})}function s(r){return t()}export{s as e,a as g,p as k};

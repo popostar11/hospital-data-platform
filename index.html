@@ -11,6 +11,7 @@
  a.card{display:block;width:320px;max-width:90vw;margin:0 auto;padding:22px;border-radius:14px;text-decoration:none;
    color:#dbeaff;background:linear-gradient(160deg,rgba(20,64,116,.85),rgba(8,26,52,.9));
    border:1px solid rgba(60,170,255,.35);transition:.2s}
+ .cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
  a.card:hover{transform:translateY(-4px);border-color:rgba(24,224,255,.8)}
  .card h2{margin:0 0 8px;font-size:17px;color:#9fe6ff}
  .card p{margin:0;font-size:12px;line-height:1.7;color:#8fb0d6}
@@ -20,14 +21,21 @@
 <body>
   <h1>急诊专科中心数据平台</h1>
   <div class="sub">示例市第二人民医院 · 急救绿道 · 静态演示</div>
-  <a class="card" href="./screen/">
-    <h2>大屏可视化终端</h2>
-    <p>1920×1080 横屏版面；本页使用导出的静态快照数据，无需后端</p>
-    <p style="margin-top:10px;color:#18e0ff">进入大屏 →</p>
-  </a>
+  <div class="cards">
+    <a class="card" href="./screen/">
+      <h2>大屏可视化终端</h2>
+      <p>1920×1080 横屏版面；本页使用导出的静态快照数据，无需后端</p>
+      <p style="margin-top:10px;color:#18e0ff">进入大屏 →</p>
+    </a>
+    <a class="card" href="./admin/">
+      <h2>后台管理系统</h2>
+      <p>可点击浏览工作台、病例、患者、字典、组织人员、报表与审计；数据为导出快照，只读</p>
+      <p style="margin-top:10px;color:#18e0ff">进入后台 →</p>
+    </a>
+  </div>
   <footer>
-    本站为 GitHub Pages 纯静态演示，只有大屏部分（数据为导出的快照）。<br/>
-    完整的后台管理系统（登录、病例增删改、报表导出）需要后端，请在本地运行：
+    本站为 GitHub Pages 纯静态演示：数据是导出的快照，<b>写操作（新增/编辑/删除/导入/导出）不会生效</b>。<br/>
+    要完整体验（真的能改数据、能导出），请在本地运行：
     <code>启动.bat</code>，然后访问 <code>http://127.0.0.1:3000/admin/</code><br/>
     全部数据为合成的示例数据，不代表任何真实机构或真实统计结果。
   </footer>

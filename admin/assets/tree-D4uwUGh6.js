@@ -1,0 +1,1 @@
+function i(n){var c;if(!n||n.length===0)return[];if(n.some(e=>e.children&&e.children.length>0))return n;const r=new Map;for(const e of n)r.set(e.id,{...e,children:[]});const d=[];for(const e of n){const o=r.get(e.id);if(!o)continue;const t=e.parentId===null?void 0:r.get(e.parentId);t&&t.id!==o.id?(c=t.children)==null||c.push(o):d.push(o)}return d}export{i as b};

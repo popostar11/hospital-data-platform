@@ -1,0 +1,1 @@
+import{_ as c,$ as i,Z as r,L as e}from"./index-neCfLpAy.js";function u(t){return e("/dicts",{type:t})}function a(t){return c("/dicts",t)}function o(t,s){return i(`/dicts/${t}`,s)}function d(t){return r(`/dicts/${t}`)}export{a as c,u as l,d as r,o as u};
